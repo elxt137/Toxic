@@ -1,0 +1,7 @@
+.shipping { display: grid; width: 100%; gap: 8px; }
+.shipping > p { display: flex; align-items: center; gap: 7px; margin: 0; color: #215c42; font-size: 12px; }
+.card { display: grid; gap: 10px; width: 100%; padding: 13px 16px; border-radius: 10px; background: #164f37; color: #fff; }
+.card .message { display: block; color: #fff; font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: 700; line-height: 1.25; }
+.track { height: 8px; overflow: hidden; border-radius: 99px; background: rgba(0,0,0,.22); }
+.track i { display: block; height: 100%; border-radius: inherit; background: #c9a55c; transition: width .2s ease; }
+.qualified .card { background: #1f6a4b; }
