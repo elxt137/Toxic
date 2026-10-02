@@ -23,14 +23,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="product-detail-visual">
             {product.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.image_url} alt={`Frasco de ${product.name}`} />
+              <img src={product.image_url} alt={`Producto: ${product.name}`} />
             ) : <div className="card-bottle" aria-hidden="true"><i /></div>}
           </div>
           <div className="product-detail-copy">
             <p className="product-brand">{product.brand}</p>
             <h1>{product.name}</h1>
-            <p className="product-detail-category">{product.category}{product.size_ml ? ` · ${product.size_ml} ml` : ""}</p>
-            <p className="product-detail-description">{product.description || "Una fragancia para descubrir y disfrutar."}</p>
+            <p className="product-detail-category">{product.category === "Decant" ? "Limpieza y protección" : "Accesorios"}{product.size_ml ? ` · ${product.size_ml} ml` : ""}</p>
+            <p className="product-detail-description">{product.description || "Un aliado para el cuidado de tu veh?culo."}</p>
             <ProductDetailActions product={product} />
           </div>
         </div>

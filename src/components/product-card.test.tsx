@@ -33,6 +33,6 @@ describe("ProductCard", () => {
     expect(screen.getByText((_, element) => element?.textContent === "$\u00a016.100")).toBeTruthy();
     expect(screen.getByText((_, element) => element?.textContent === "3 cuotas sin interés de $\u00a05.366,67")).toBeTruthy();
     expect(screen.getByRole("link", { name: /comprar/i }).getAttribute("href")).toBe("/productos/torino-21");
-    expect(screen.getByRole("img", { name: "Frasco de Torino 21" }).getAttribute("src")).toBe(product.image_url);
+    expect(screen.getByRole("img", { name: "Producto: Torino 21" }).getAttribute("src")).toBe(product.image_url);
   });
 });

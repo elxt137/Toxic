@@ -10,7 +10,7 @@ describe("formatPrice", () => {
 
 describe("demoProducts", () => {
   it("only exposes published products in the fallback catalog", () => {
-    expect(demoProducts).toHaveLength(3);
+    expect(demoProducts).toHaveLength(5);
     expect(demoProducts.every((product) => product.is_published)).toBe(true);
   });
 });

@@ -19,7 +19,7 @@ describe("Catalog cart", () => {
     window.localStorage.setItem("notta-cart", JSON.stringify([{ product, variantId: "variant-1", quantity: 1 }]));
     render(<Catalog products={[product]} />);
     const drawer = screen.getByLabelText("Tu pedido");
-    await waitFor(() => expect(drawer.querySelector('img[alt="Frasco de Blanche Absolu"]')?.getAttribute("src")).toBe(product.image_url));
+    await waitFor(() => expect(drawer.querySelector('img[alt="Producto: Blanche Absolu"]')?.getAttribute("src")).toBe(product.image_url));
   });
 
   it("keeps the closed order drawer out of keyboard navigation", async () => {

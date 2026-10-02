@@ -1,10 +1,10 @@
-# Notta Decants · v1.0.0
+# Toxic · v1.0.0
 
-Vidriera pública de perfumes, decants y frascos completos con catálogo filtrable, precios, disponibilidad y armado de pedido por WhatsApp. Incluye un panel privado para administrar productos, stock y publicación, autenticado con Google mediante Supabase y autorizado por whitelist.
+Vidriera pública de productos para el cuidado vehicular con catálogo filtrable, precios, disponibilidad y armado de pedido por WhatsApp. Incluye un panel privado para administrar productos, stock y publicación, autenticado con Google mediante Supabase y autorizado por whitelist.
 
 ## Estado
 
-La base funcional está lista. Sin credenciales de Supabase, la portada muestra tres productos demo para revisar el diseño. Al configurar el proyecto, la vidriera consulta exclusivamente productos publicados y el panel usa datos reales.
+La base funcional está lista. Sin credenciales de Supabase, la portada muestra cinco productos demo de cuidado vehicular para revisar el diseño. Al configurar el proyecto, la vidriera consulta exclusivamente productos publicados y el panel usa datos reales.
 
 ## Stack
 
@@ -129,3 +129,7 @@ Hostinger documenta soporte de SSR, ISR y rutas API en su [hosting de Next.js](h
 - Historial de movimientos de stock.
 - Canal de consulta/compra, una vez definido el flujo comercial.
 - Pruebas end-to-end con un Supabase de staging.
+
+## Adaptación de la vidriera a Toxic
+
+La portada, el catálogo, el pedido y el panel usan textos de cuidado vehicular. Los productos y precios demo son ilustrativos. La interfaz muestra las categorías Limpieza y protección y Accesorios; por compatibilidad conserva los valores históricos Decant y Frasco completo en la base de datos. No se modificaron productos existentes ni se requiere una migración para este cambio de textos.
