@@ -225,3 +225,17 @@ button { cursor: pointer; }
 .card-bottle::before { display: none; }
 .card-bottle i { inset: 30% 12%; display: grid; place-items: center; background: #18242b; border: 0; }
 .card-bottle i::after { content: "TOXIC"; color: #fff; font: 700 18px sans-serif; letter-spacing: 2px; }
+
+/* Portada estilo tienda con barra lateral */
+:root { --tx-accent: #f5a30a; --tx-accent-dark: #b77700; }
+.tx-store { font-family: var(--font-body), "Trebuchet MS", sans-serif; background: #fff; }
+.tx-store .shell { width: min(1120px, calc(100% - 32px)); }
+.tx-store .product-visual { height: 220px; }
+.tx-store { padding-top: 64px; }
+@media (min-width: 1001px) { .tx-store { --rail-width: 56px; padding-left: var(--rail-width); } }
+@media (max-width: 700px) { .tx-store { padding-top: 112px; } }
+.tx-store .catalog-heading p { color: var(--tx-accent-dark); }
+.tx-store .catalog-heading h2, .tx-store .shelf-title h3 { font-family: var(--font-body), sans-serif; font-weight: 600; letter-spacing: -.02em; }
+.tx-store .catalog-heading h2 { font-size: clamp(30px, 3.4vw, 44px); }
+.tx-store .shelf-title h3 { font-size: 22px; }
+.tx-store .cart-trigger b { background: var(--tx-accent); color: #111; }

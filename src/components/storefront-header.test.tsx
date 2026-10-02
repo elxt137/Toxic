@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { StorefrontHeader } from "@/components/storefront-header";
@@ -9,20 +9,36 @@ describe("StorefrontHeader", () => {
     window.localStorage.clear();
   });
 
-  it("shows the requested navigation and changes its visual state after scrolling", () => {
+  it("shows the category menu and changes its visual state after scrolling", () => {
     render(<StorefrontHeader />);
 
-    expect(screen.getByRole("link", { name: "Inicio" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Productos" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Contacto" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Quiénes Somos" })).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Cómo Comprar" })).toBeTruthy();
+    const nav = screen.getByRole("navigation", { name: "Navegación principal" });
+    for (const label of ["Lavado", "Interior", "Protección", "Accesorios", "Kits"]) {
+      expect(within(nav).getByRole("link", { name: label })).toBeTruthy();
+    }
+    expect(screen.getByRole("link", { name: "Toxic, inicio" })).toBeTruthy();
     expect(screen.getByRole("banner").getAttribute("data-scrolled")).toBe("false");
 
     Object.defineProperty(window, "scrollY", { configurable: true, value: 12 });
     fireEvent.scroll(window);
 
     expect(screen.getByRole("banner").getAttribute("data-scrolled")).toBe("true");
+  });
+
+  it("reveals the institutional links from Ver más", () => {
+    render(<StorefrontHeader />);
+
+    const toggle = screen.getByRole("button", { name: "Ver más" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(toggle);
+
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    for (const label of ["Quiénes somos", "Cómo comprar", "Envíos", "Contacto"]) {
+      expect(screen.getByRole("link", { name: label })).toBeTruthy();
+    }
+
+    fireEvent.mouseDown(document.body);
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
   it("opens the complete menu from the mobile toggle", () => {

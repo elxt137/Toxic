@@ -1,8 +1,14 @@
-import { ArrowDown, AtSign, MapPin, MessageCircle } from "lucide-react";
-
 import { Catalog } from "@/components/catalog";
+import { CookieNotice } from "@/components/home/cookie-notice";
+import { FloatingActions } from "@/components/home/floating-actions";
+import { HeroCarousel } from "@/components/home/hero-carousel";
+import { CategoryCircles, HowToBuy, PromoBanners, SideRail, SiteFooter, WideBanner } from "@/components/home/home-sections";
+import { ProductCarousel } from "@/components/home/product-carousel";
+import { ShortsGallery } from "@/components/home/shorts-gallery";
+import { StoreReviews } from "@/components/home/store-reviews";
 import { StorefrontHeader } from "@/components/storefront-header";
 import { getSupabaseConfig } from "@/lib/env";
+import { heroSlides, homeCategories, shortVideos, storeReviews } from "@/lib/home-content";
 import { getPublishedProducts } from "@/lib/products";
 import type { ProductWithVariants } from "@/types/database";
 
@@ -16,18 +22,28 @@ export default async function Home() {
     catalogUnavailable = true;
   }
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const featured = products.filter((product) => product.is_featured);
+  const available = products.filter((product) => product.variants.some((variant) => variant.stock > 0));
 
   return (
-    <main className="notta-page">
+    <main className="notta-page tx-store">
       {!getSupabaseConfig() && <div className="demo-banner">Catálogo de muestra · Productos y precios ilustrativos.</div>}
+      <SideRail categories={homeCategories} />
       <StorefrontHeader />
-      <section className="notta-hero">
-        <div className="shell notta-hero-inner"><p>Limpieza · Protección · Accesorios</p><h1>Tu auto impecable,<br /><em>empieza acá.</em></h1><div><span>Shampoo, ceras, cepillos, luces LED y microfibras para cuidar cada detalle de tu vehículo. Armá tu pedido por WhatsApp.</span><a href="#catalogo">Explorar productos <ArrowDown size={16} /></a></div></div>
-      </section>
+      <HeroCarousel slides={heroSlides} />
       {catalogUnavailable && <div className="catalog-notice shell" role="status">No pudimos cargar el catálogo en este momento. Probá de nuevo en unos minutos.</div>}
+      <CategoryCircles categories={homeCategories} />
+      <PromoBanners />
+      <ProductCarousel title="Lo más vendido" products={available} />
+      <WideBanner />
+      <ProductCarousel title="Destacados" products={featured.length >= 3 ? featured : products} />
+      <ShortsGallery shorts={shortVideos} />
       <Catalog products={products} whatsappNumber={whatsappNumber} />
-      <section className="notta-info" id="info"><div className="shell info-grid"><div><MapPin size={20} /><h2>Envíos y retiro</h2><p>Coordiná retiro o envío a través de WhatsApp una vez que armes tu pedido.</p></div><div><MessageCircle size={20} /><h2>Atención personalizada</h2><p>¿No sabés cuál elegir? Escribinos y te ayudamos a elegir los productos para tu auto.</p></div><div><AtSign size={20} /><h2>Seguinos</h2><p>Novedades, ingresos y recomendaciones en nuestras redes.</p></div></div></section>
-      <footer className="notta-footer shell"><div className="notta-logo">TOXIC <span>AUTO CARE</span></div><p>© {new Date().getFullYear()} Toxic</p></footer>
+      <HowToBuy />
+      <StoreReviews reviews={storeReviews} />
+      <SiteFooter whatsappNumber={whatsappNumber} />
+      <FloatingActions whatsappNumber={whatsappNumber} />
+      <CookieNotice />
     </main>
   );
 }
