@@ -67,7 +67,7 @@ export async function createProduct(formData: FormData) {
   const { data: created, error } = await supabase.from("products").insert({
     ...product, price: firstVariant.price, stock: firstVariant.stock, size_ml: firstVariant.size_ml, slug: `${slugify(product.name)}-${crypto.randomUUID().slice(0, 6)}`, currency: "ARS",
   }).select("id").single();
-  if (error) throw new Error(`No se pudo crear el perfume: ${error.message}`);
+  if (error) throw new Error(`No se pudo crear el producto: ${error.message}`);
   const { error: variantsError } = await supabase.from("product_variants").insert(variants.map((variant, index) => ({ ...variant, id: undefined, product_id: created.id, sort_order: index })));
   if (variantsError) throw new Error(`No se pudieron crear las presentaciones: ${variantsError.message}`);
   revalidatePath("/"); revalidatePath("/admin");
@@ -81,7 +81,7 @@ export async function updateProduct(id: string, formData: FormData) {
   const supabase = await createClient();
   const firstVariant = variants[0];
   const { error } = await supabase.from("products").update({ ...product, price: firstVariant.price, stock: firstVariant.stock, size_ml: firstVariant.size_ml }).eq("id", id);
-  if (error) throw new Error(`No se pudo actualizar el perfume: ${error.message}`);
+  if (error) throw new Error(`No se pudo actualizar el producto: ${error.message}`);
   const existingIds = variants.flatMap((variant) => variant.id ? [variant.id] : []);
   const { error: deactivateError } = await supabase.from("product_variants").update({ is_active: false }).eq("product_id", id).not("id", "in", `(${existingIds.join(",") || "00000000-0000-0000-0000-000000000000"})`);
   if (deactivateError) throw new Error(`No se pudieron actualizar las presentaciones: ${deactivateError.message}`);

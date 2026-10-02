@@ -63,7 +63,7 @@ export function CheckoutForm() {
   }
 
   if (cart === null) return <div className="checkout-shell"><p>Cargando tu pedido…</p></div>;
-  if (!cart.length) return <div className="checkout-shell checkout-empty"><h1>Tu pedido está vacío</h1><p>Agregá perfumes antes de continuar con el pago.</p><Link href="/productos">Ver productos</Link></div>;
+  if (!cart.length) return <div className="checkout-shell checkout-empty"><h1>Tu pedido está vacío</h1><p>Agregá productos antes de continuar con el pago.</p><Link href="/productos">Ver productos</Link></div>;
 
   return <div className="checkout-shell checkout-layout">
     <section className="checkout-details"><p className="eyebrow">Checkout</p><h1>Datos de envío</h1><p className="checkout-intro">Completá los datos para preparar tu pedido. Luego te llevamos a Mercado Pago.</p>

@@ -8,11 +8,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Proyecto Notta Decants
+# Proyecto [Nombre de tu Marca]
 
 ## Objetivo y convenciones
 
-- Mantener la vidriera Notta Decants y su panel administrativo. Versión actual: 1.0.0.
+- Mantener la vidriera de [Nombre de tu Marca] (e-commerce de productos para el cuidado vehicular: shampoo, ceras, cepillos, luces LED, microfibras, etc.) y su panel administrativo. Versión actual: 1.0.0.
 - Código y nombres técnicos en inglés; interfaz y documentación comercial en español rioplatense.
 - App Router y Server Components por defecto; Client Components sólo para interacción real.
 - Datos en `src/lib`, UI reusable en `src/components`, mutaciones cerca de la ruta en `actions.ts`.
@@ -42,4 +42,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Datos y verificación
 
-Agregar migraciones SQL nuevas; no reescribir una ya desplegada. Mantener sincronizados SQL, tipos TypeScript y README. Antes de entregar, ejecutar `npm run check`. Con staging, probar rechazo fuera de whitelist y CRUD autorizado.
+- Agregar migraciones SQL nuevas; no reescribir una ya desplegada. Mantener sincronizados SQL, tipos TypeScript y README.
+- Antes de entregar, ejecutar `npm run check`. Con staging, probar rechazo fuera de whitelist y CRUD autorizado.

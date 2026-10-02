@@ -22,7 +22,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
       <div className={`product-visual tone-${(index % 3) + 1}`}>
         {product.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={product.image_url} alt={`Frasco de ${product.name}`} />
+          <img src={product.image_url} alt={`Producto: ${product.name}`} />
         ) : <div className="card-bottle" aria-hidden="true"><i /></div>}
         {product.is_featured && <span className="featured-badge">Destacado</span>}
         {soldOut && <span className="stock-badge">Sin stock</span>}

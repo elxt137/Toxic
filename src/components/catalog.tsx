@@ -19,7 +19,7 @@ const money = (value: number) => new Intl.NumberFormat("es-AR", {
 }).format(value);
 
 export function Catalog({ products, whatsappNumber }: { products: ProductWithVariants[]; whatsappNumber?: string }) {
-  const [brand, setBrand] = useState("Todas las casas");
+  const [brand, setBrand] = useState("Todas las marcas");
   const [category, setCategory] = useState("Todos los tipos");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
@@ -76,7 +76,7 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
 
   const brands = useMemo(() => [...new Set(products.map((product) => product.brand))].sort(), [products]);
   const filtered = products.filter((product) =>
-    (brand === "Todas las casas" || product.brand === brand) &&
+    (brand === "Todas las marcas" || product.brand === brand) &&
     (category === "Todos los tipos" || product.category === category),
   );
   const featured = filtered.filter((product) => product.is_featured);
@@ -128,14 +128,14 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
   return (
     <>
       <section className="catalog-section shell" id="catalogo">
-        <div className="catalog-heading"><div><p>Perfumes · Decants · Frascos completos</p><h2>Encontrá tu próxima fragancia.</h2></div><button className="cart-trigger" type="button" onClick={() => setOpen(true)}><ShoppingBag size={18} /> Pedido <b>{unitCount}</b></button></div>
-        <div className="catalog-filters" aria-label="Filtros de catálogo"><span><SlidersHorizontal size={16} /> Filtros</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option>Todos los tipos</option><option>Decant</option><option>Frasco completo</option></select><select value={brand} onChange={(event) => setBrand(event.target.value)}><option>Todas las casas</option>{brands.map((item) => <option key={item}>{item}</option>)}</select></div>
+        <div className="catalog-heading"><div><p>Limpieza · Protección · Accesorios</p><h2>Todo para cuidar tu vehículo.</h2></div><button className="cart-trigger" type="button" onClick={() => setOpen(true)}><ShoppingBag size={18} /> Pedido <b>{unitCount}</b></button></div>
+        <div className="catalog-filters" aria-label="Filtros de catálogo"><span><SlidersHorizontal size={16} /> Filtros</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option>Todos los tipos</option><option value="Decant">Limpieza y protección</option><option value="Frasco completo">Accesorios</option></select><select value={brand} onChange={(event) => setBrand(event.target.value)}><option>Todas las marcas</option>{brands.map((item) => <option key={item}>{item}</option>)}</select></div>
         {featured.length > 0 && <CatalogShelf eyebrow="Destacados / más elegidos" products={featured} />}
-        <CatalogShelf eyebrow="Todo el catálogo" products={filtered} empty={products.length ? "No encontramos perfumes con esos filtros." : "El catálogo se está preparando."} />
+        <CatalogShelf eyebrow="Todo el catálogo" products={filtered} empty={products.length ? "No encontramos productos con esos filtros." : "El catálogo se está preparando."} />
       </section>
       <aside className={`order-drawer ${open ? "is-open" : ""}`} id="pedido" aria-label="Tu pedido" aria-hidden={!open} inert={!open}>
         <div className="order-header"><div><p>Tu pedido</p><strong>{unitCount} producto{unitCount === 1 ? "" : "s"}</strong></div><button type="button" onClick={() => setOpen(false)} aria-label="Cerrar pedido"><X size={20} /></button></div>
-        <div className="order-lines">{cart.length === 0 ? <p className="order-empty">Todavía no agregaste perfumes a tu pedido.</p> : cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return <div className="order-line" key={variantId}><div className="order-line-image">{product.image_url ? <img src={product.image_url} alt={`Frasco de ${product.name}`} /> : <div aria-hidden="true" />}</div><div className="order-line-details"><b>{product.brand}</b><span>{product.name} — {variant?.label}</span><small>{money(variant?.price ?? 0)}</small></div><div className="quantity"><button type="button" onClick={() => changeQuantity(variantId, -1)}><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => changeQuantity(variantId, 1)}><span>+</span></button></div></div>; })}</div>
+        <div className="order-lines">{cart.length === 0 ? <p className="order-empty">Todavía no agregaste productos a tu pedido.</p> : cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return <div className="order-line" key={variantId}><div className="order-line-image">{product.image_url ? <img src={product.image_url} alt={`Producto: ${product.name}`} /> : <div aria-hidden="true" />}</div><div className="order-line-details"><b>{product.brand}</b><span>{product.name} — {variant?.label}</span><small>{money(variant?.price ?? 0)}</small></div><div className="quantity"><button type="button" onClick={() => changeQuantity(variantId, -1)}><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => changeQuantity(variantId, 1)}><span>+</span></button></div></div>; })}</div>
         <div className="order-form"><div className="order-total"><span>Total</span><strong>{money(total)}</strong></div>{cart.length > 0 && <FreeShippingProgress total={total} />}<button className="mercadopago-button" type="button" onClick={() => router.push("/checkout")} disabled={!cart.length}><CreditCard size={16} /> Iniciar compra</button><button className="add-more-products" type="button" onClick={addMoreProducts}>Agregar más productos</button><button className="whatsapp-button" type="button" onClick={sendOrder} disabled={!cart.length || !whatsappNumber}><Send size={16} /> Enviar pedido por WhatsApp</button>{!whatsappNumber && <small>Falta configurar el número comercial de WhatsApp.</small>}</div>
         {cart.length > 0 && <CartRecommendations products={recommendations} onAdd={addRecommendation} />}
       </aside>

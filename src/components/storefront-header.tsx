@@ -57,11 +57,11 @@ export function StorefrontHeader() {
     <header data-scrolled={isScrolled} className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={`${styles.topRow} shell`}>
         <form className={styles.search} action="/productos" role="search">
-          <label className={styles.visuallyHidden} htmlFor="storefront-search">Buscar perfumes</label>
+          <label className={styles.visuallyHidden} htmlFor="storefront-search">Buscar productos</label>
           <Search aria-hidden="true" size={17} />
-          <input id="storefront-search" name="q" type="search" placeholder="Buscar fragancias" />
+          <input id="storefront-search" name="q" type="search" placeholder="Buscar productos para tu auto" />
         </form>
-        <Link className={styles.logo} href="/" aria-label="Notta Decants, inicio">NOTTA <span>DECANTS</span></Link>
+        <Link className={styles.logo} href="/" aria-label="Toxic, inicio">TOXIC <span>AUTO CARE</span></Link>
         <div className={styles.actions}>
           <Link href="/login" aria-label="Iniciar sesión"><UserRound aria-hidden="true" size={20} /></Link>
           <Link className={styles.cart} href="/#pedido" aria-label={`Carrito de compras, ${cartCount} productos`} onClick={openCart}>
