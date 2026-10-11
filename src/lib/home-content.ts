@@ -34,7 +34,7 @@ export const heroSlides: HeroSlide[] = [
     title: "Brillo que",
     highlight: "se nota",
     subtitle: "Ceras y selladores para proteger la pintura del sol, el agua y la suciedad.",
-    cta: { label: "Conocé la línea de protección", href: "/#catalogo" },
+    cta: { label: "Conocé la línea de protección", href: "/productos?categoria=proteccion" },
     theme: "steel",
   },
   {
@@ -43,20 +43,20 @@ export const heroSlides: HeroSlide[] = [
     title: "Las herramientas",
     highlight: "correctas",
     subtitle: "Cepillos, microfibras y luces LED para trabajar cómodo y rápido.",
-    cta: { label: "Ver accesorios", href: "/#catalogo" },
+    cta: { label: "Ver accesorios", href: "/productos?categoria=accesorios" },
     theme: "toxic",
   },
 ];
 
 export const homeCategories: HomeCategory[] = [
-  { id: "lavado", label: "Lavado", href: "/#catalogo", icon: "droplets" },
-  { id: "interior", label: "Limpieza interior", href: "/#catalogo", icon: "armchair" },
-  { id: "proteccion", label: "Protección", href: "/#catalogo", icon: "shield" },
-  { id: "brillo", label: "Ceras y brillo", href: "/#catalogo", icon: "sparkles" },
-  { id: "cepillos", label: "Cepillos y microfibras", href: "/#catalogo", icon: "brush" },
-  { id: "iluminacion", label: "Iluminación LED", href: "/#catalogo", icon: "lightbulb" },
-  { id: "kits", label: "Kits", href: "/#catalogo", icon: "package" },
-  { id: "ofertas", label: "Ofertas", href: "/#catalogo", icon: "tag" },
+  { id: "lavado", label: "Lavado", href: "/productos?categoria=lavado", icon: "droplets" },
+  { id: "interior", label: "Limpieza interior", href: "/productos?categoria=interior", icon: "armchair" },
+  { id: "proteccion", label: "Protección", href: "/productos?categoria=proteccion", icon: "shield" },
+  { id: "brillo", label: "Ceras y brillo", href: "/productos?categoria=brillo", icon: "sparkles" },
+  { id: "cepillos", label: "Cepillos y microfibras", href: "/productos?categoria=cepillos", icon: "brush" },
+  { id: "iluminacion", label: "Iluminación LED", href: "/productos?categoria=iluminacion", icon: "lightbulb" },
+  { id: "kits", label: "Kits", href: "/productos?categoria=kits", icon: "package" },
+  { id: "todos", label: "Todos los productos", href: "/productos", icon: "tag" },
 ];
 
 export const shortVideos: ShortVideo[] = [

@@ -15,9 +15,9 @@ describe("ShortsGallery", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("tells the visitor when a short has no video loaded yet", () => {
+  it("does not offer playback for videos that have not been uploaded", () => {
     render(<ShortsGallery shorts={[{ id: "b", title: "Lavado" }]} />);
-    fireEvent.click(screen.getByRole("button", { name: "Ver video: Lavado" }));
-    expect(screen.getByRole("dialog").textContent).toContain("Video próximamente");
+    expect(screen.queryByRole("button", { name: "Ver video: Lavado" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Videos RC2" })).toBeNull();
   });
 });

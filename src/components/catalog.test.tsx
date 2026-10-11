@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Catalog } from "@/components/catalog";
@@ -14,6 +14,35 @@ describe("Catalog cart", () => {
     window.sessionStorage.clear();
   });
   afterEach(cleanup);
+
+  it("uses incoming search filters and lets visitors clear them", () => {
+    render(<Catalog products={[product]} initialQuery="missing product" />);
+    expect(screen.queryByRole("heading", { name: /Blanche/ })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Limpiar filtros" }));
+    expect(screen.getByRole("heading", { name: /Blanche/ })).toBeTruthy();
+  });
+
+  it("does not increase cart quantities above available stock", async () => {
+    window.localStorage.setItem("notta-cart", JSON.stringify([{ product, variantId: "variant-1", quantity: 1 }]));
+    render(<Catalog products={[product]} />);
+    fireEvent.click(screen.getByRole("button", { name: /Pedido/ }));
+    const increase = await screen.findByRole("button", { name: "Sumar Blanche Absolu" });
+    expect((increase as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("ignores malformed stored carts instead of breaking the storefront", async () => {
+    window.localStorage.setItem("notta-cart", JSON.stringify({ invalid: true }));
+    render(<Catalog products={[product]} />);
+    fireEvent.click(screen.getByRole("button", { name: /Pedido/ }));
+    await waitFor(() => expect(within(screen.getByLabelText("Tu pedido")).getByText("Todavía no agregaste productos a tu pedido.")).toBeTruthy());
+  });
+
+  it("closes the order with Escape", () => {
+    render(<Catalog products={[product]} />);
+    fireEvent.click(screen.getByRole("button", { name: /Pedido/ }));
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.getByLabelText("Tu pedido").getAttribute("aria-hidden")).toBe("true");
+  });
 
   it("shows the product image next to each cart item", async () => {
     window.localStorage.setItem("notta-cart", JSON.stringify([{ product, variantId: "variant-1", quantity: 1 }]));

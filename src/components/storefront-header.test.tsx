@@ -16,7 +16,7 @@ describe("StorefrontHeader", () => {
     for (const label of ["Lavado", "Interior", "Protección", "Accesorios", "Kits"]) {
       expect(within(nav).getByRole("link", { name: label })).toBeTruthy();
     }
-    expect(screen.getByRole("link", { name: "Toxic, inicio" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "RC2 · Estética Vehicular, inicio" })).toBeTruthy();
     expect(screen.getByRole("banner").getAttribute("data-scrolled")).toBe("false");
 
     Object.defineProperty(window, "scrollY", { configurable: true, value: 12 });
@@ -34,7 +34,7 @@ describe("StorefrontHeader", () => {
 
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
     for (const label of ["Quiénes somos", "Cómo comprar", "Envíos", "Contacto"]) {
-      expect(screen.getByRole("link", { name: label })).toBeTruthy();
+      expect(within(document.getElementById("header-more")!).getByRole("link", { name: label })).toBeTruthy();
     }
 
     fireEvent.mouseDown(document.body);

@@ -152,4 +152,11 @@
   .howTo ol { grid-template-columns: 1fr; }
   .footerGrid { grid-template-columns: 1fr; }
 }
+.footer [id], .howTo { scroll-margin-top: 140px; }
+.trackArrow:disabled { opacity: .3; cursor: default; }
+.rail { overflow-y: auto; }
+@media (max-width: 360px) {
+  .heroContent h1, .heroContent h2 { font-size: 42px; }
+  .heroContent a { margin-top: 20px; }
+}
 @media (prefers-reduced-motion: reduce) { .heroSlide, .categoryItem span, .promo, .wideBanner { transition: none; } }

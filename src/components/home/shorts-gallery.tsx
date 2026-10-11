@@ -17,13 +17,16 @@ export function ShortsGallery({ shorts }: { shorts: ShortVideo[] }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [current]);
 
+  const availableShorts = shorts.filter((short) => short.video);
+  if (!availableShorts.length) return null;
+
   return (
     <section className={styles.shorts} id="videos">
       <div className="shell">
-        <h2 className={styles.sectionTitle}>Videos Toxic</h2>
+        <h2 className={styles.sectionTitle}>Videos RC2</h2>
         <p className={styles.sectionLead}>Tips de detailing en segundos: mirá, aprendé y aplicalo en tu auto.</p>
         <div className={styles.shortsTrack}>
-          {shorts.map((short, index) => (
+          {availableShorts.map((short, index) => (
             <button key={short.id} type="button" className={`${styles.shortCard} ${styles[`shortTone${(index % 3) + 1}`]}`} aria-label={`Ver video: ${short.title}`} onClick={() => setCurrent(short)}>
               {short.video && <video src={short.video} poster={short.poster} muted playsInline preload="metadata" aria-hidden="true" />}
               <span className={styles.playBadge} aria-hidden="true"><Play size={26} fill="currentColor" /></span>
