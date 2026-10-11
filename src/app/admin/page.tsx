@@ -44,7 +44,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
   const currentSection = sections[section];
 
   return <main className="admin-page">
-    <header className="admin-header"><div><Link className="brand-mark" href="/">TOXIC <span>admin</span></Link><p>{admin.email}</p></div><div className="admin-nav"><Link href="/" target="_blank">Ver vidriera <ExternalLink size={15} /></Link><form action="/auth/signout" method="post"><button type="submit">Salir <LogOut size={15} /></button></form></div></header>
+    <header className="admin-header"><div><Link className="brand-mark" href="/">RC2 <span>admin</span></Link><p>{admin.email}</p></div><div className="admin-nav"><Link href="/" target="_blank">Ver vidriera <ExternalLink size={15} /></Link><form action="/auth/signout" method="post"><button type="submit">Salir <LogOut size={15} /></button></form></div></header>
     <div className="admin-content admin-workspace">
       <aside className="admin-sections" aria-label="Secciones de administración"><p>Administración</p>{Object.entries(sections).map(([key, item]) => { const Icon = item.icon; return <Link className={section === key ? "active" : ""} href={`/admin?section=${key}`} key={key}><Icon size={17} />{item.label}</Link>; })}</aside>
       <section className="admin-main">

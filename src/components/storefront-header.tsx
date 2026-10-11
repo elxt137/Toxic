@@ -9,18 +9,18 @@ import styles from "./storefront-header.module.css";
 type StoredCartItem = { quantity?: number };
 
 const categoryLinks = [
-  { href: "/#catalogo", label: "Lavado" },
-  { href: "/#catalogo", label: "Interior" },
-  { href: "/#catalogo", label: "Protección" },
-  { href: "/#catalogo", label: "Accesorios" },
-  { href: "/#catalogo", label: "Kits" },
+  { href: "/productos?categoria=lavado", label: "Lavado" },
+  { href: "/productos?categoria=interior", label: "Interior" },
+  { href: "/productos?categoria=proteccion", label: "Protección" },
+  { href: "/productos?categoria=accesorios", label: "Accesorios" },
+  { href: "/productos?categoria=kits", label: "Kits" },
 ];
 
 const moreLinks = [
   { href: "/productos", label: "Todos los productos" },
-  { href: "/#info", label: "Quiénes somos" },
+  { href: "/#nosotros", label: "Quiénes somos" },
   { href: "/#como-comprar", label: "Cómo comprar" },
-  { href: "/#info", label: "Envíos" },
+  { href: "/#envios", label: "Envíos" },
   { href: "/#contacto", label: "Contacto" },
 ];
 
@@ -83,7 +83,7 @@ export function StorefrontHeader() {
     <header data-scrolled={isScrolled} className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={`${styles.bar} shell`}>
         <button className={styles.menuToggle} type="button" aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}</button>
-        <Link className={styles.logo} href="/" aria-label="Toxic, inicio">Toxic<span>auto care</span></Link>
+        <Link className={styles.logo} href="/" aria-label="RC2 · Estética Vehicular, inicio">RC2<span>estética vehicular</span></Link>
         <form className={`${styles.search} ${showSearch ? styles.searchOpen : ""}`} action="/productos" role="search">
           <label className={styles.visuallyHidden} htmlFor="storefront-search">Buscar productos</label>
           <input id="storefront-search" name="q" type="search" placeholder="Buscá acá" />
@@ -99,8 +99,8 @@ export function StorefrontHeader() {
           {moreOpen && <div className={styles.morePanel} id="header-more">{moreLinks.map((link) => <Link key={link.label} href={link.href} onClick={closeMenus}>{link.label}</Link>)}</div>}
         </div>
         <div className={styles.actions}>
-          <Link className={styles.hideSmall} href="/#catalogo" aria-label="Ofertas"><Flame aria-hidden="true" size={20} /></Link>
-          <Link className={styles.hideSmall} href="/#como-comprar" aria-label="Seguí tu pedido"><Package aria-hidden="true" size={20} /></Link>
+          <Link className={styles.hideSmall} href="/productos" aria-label="Todos los productos"><Flame aria-hidden="true" size={20} /></Link>
+          <Link className={styles.hideSmall} href="/#como-comprar" aria-label="Cómo comprar"><Package aria-hidden="true" size={20} /></Link>
           <Link className={styles.hideSmall} href="/#contacto" aria-label="Atención al cliente"><MessageCircle aria-hidden="true" size={20} /></Link>
           <Link href="/login" aria-label="Iniciar sesión"><UserRound aria-hidden="true" size={20} /></Link>
           <Link className={styles.cart} href="/#pedido" aria-label={`Carrito de compras, ${cartCount} productos`} onClick={openCart}>

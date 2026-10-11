@@ -10,6 +10,7 @@ import { StorefrontHeader } from "@/components/storefront-header";
 import { getSupabaseConfig } from "@/lib/env";
 import { heroSlides, homeCategories, shortVideos, storeReviews } from "@/lib/home-content";
 import { getPublishedProducts } from "@/lib/products";
+import { getWhatsappNumber } from "@/lib/store-contact";
 import type { ProductWithVariants } from "@/types/database";
 
 export default async function Home() {
@@ -21,7 +22,7 @@ export default async function Home() {
   } catch {
     catalogUnavailable = true;
   }
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const whatsappNumber = getWhatsappNumber();
   const featured = products.filter((product) => product.is_featured);
   const available = products.filter((product) => product.variants.some((variant) => variant.stock > 0));
 
