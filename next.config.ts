@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     // Hostinger termina TLS y reenvía las Server Actions. Limitamos la
     // excepción de origen al host público que sirve la vidriera.
     serverActions: {
-      allowedOrigins: ["darkseagreen-gaur-344770.hostingersite.com"],
+      allowedOrigins: ["goldenrod-cassowary-586867.hostingersite.com"],
     },
   },
 };
