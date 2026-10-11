@@ -10,6 +10,8 @@ Los accesos de categorías abren `/productos?categoria=...`; el buscador usa `/p
 
 El carrito resta y suma unidades hasta el stock disponible, descarta almacenamiento inválido y permite cerrar con Escape. Los videos aparecen únicamente cuando tienen un archivo cargado. Los botones de WhatsApp requieren el número comercial; no se publica un enlace de Instagram hasta contar con el perfil real.
 
+En **Administración → Productos e inventario**, el buscador con lupa filtra por nombre, marca o slug sin distinguir mayúsculas ni tildes. El estado de stock suma las presentaciones activas: verde desde 3 unidades, amarillo con 1 o 2, y rojo con 0. La publicación se muestra por separado del stock.
+
 Para verificar: ejecutá `npm test` y `npm run check`. Para los flujos en navegador, iniciá un catálogo demo sin credenciales de Supabase con `npm run dev -- --port 3100` y ejecutá `npm run test:e2e` en otra terminal. La prueba usa Edge instalado, intercepta el pago sin realizar compras y revisa 320, 390, 768, 1024 y 1440 px. Se puede elegir otro navegador instalado con `RC2_BROWSER_CHANNEL` y otra URL con `RC2_TEST_URL`.
 
 ## Estado

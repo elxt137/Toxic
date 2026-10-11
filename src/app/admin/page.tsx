@@ -2,6 +2,7 @@ import { ExternalLink, LogOut, Package, Palette, Plus, ReceiptText } from "lucid
 import Link from "next/link";
 
 import { ProductForm } from "@/components/product-form";
+import { AdminInventory } from "@/components/admin-inventory";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { defaultAnnouncement } from "@/lib/storefront";
@@ -18,7 +19,7 @@ const sections = {
 type Section = keyof typeof sections;
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
-type AdminPageProps = { searchParams: Promise<{ success?: string; section?: string }> };
+type AdminPageProps = { searchParams: Promise<{ success?: string; section?: string; q?: string | string[] }> };
 
 function getSection(value?: string): Section {
   return value === "products" || value === "customization" ? value : "sales";
@@ -51,7 +52,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         <div className="admin-title"><div><p className="eyebrow">Panel privado</p><h1>{currentSection.label}</h1></div>{section === "products" && <div className="metrics"><span><b>{products.length}</b> productos</span><span><b>{units}</b> unidades</span><span><b>{published}</b> publicados</span></div>}</div>
         {params.success && <div className="form-message success">Cambios guardados correctamente.</div>}
         {section === "sales" && <SalesSection orders={orders ?? []} orderItems={orderItems ?? []} />}
-        {section === "products" && <ProductsSection products={productsWithVariants} />}
+        {section === "products" && <ProductsSection products={productsWithVariants} query={typeof params.q === "string" ? params.q : ""} />}
         {section === "customization" && <section className="announcement-editor customization-panel"><div><p className="eyebrow">Barra superior</p><h2>Mensaje en movimiento</h2><p>Editalo desde acá y guardá los cambios sin modificar código.</p></div><form action={updateAnnouncement}><input name="announcement_text" defaultValue={storefront?.announcement_text ?? defaultAnnouncement} required maxLength={240} aria-label="Mensaje promocional" /><button className="save-button" type="submit">Guardar mensaje</button></form></section>}
       </section>
     </div>
@@ -66,6 +67,6 @@ function SalesSection({ orders, orderItems }: { orders: Order[]; orderItems: Ord
   })}</div>}</section>;
 }
 
-function ProductsSection({ products }: { products: (Product & { variants: Database["public"]["Tables"]["product_variants"]["Row"][] })[] }) {
-  return <><details className="new-product-panel"><summary><Plus size={18} /> Agregar producto</summary><ProductForm action={createProduct} submitLabel="Crear producto" /></details><section className="inventory-list">{products.length === 0 && <div className="admin-empty"><Package size={32} /><h2>Inventario vacío</h2><p>Agregá el primer producto desde el botón superior.</p></div>}{products.map((product) => { const update = updateProduct.bind(null, product.id); return <details className="inventory-item" key={product.id}><summary><span className={`status-dot ${product.is_published ? "live" : "draft"}`} /><span className="inventory-name"><b>{product.name}</b><small>{product.brand}</small></span><span className="inventory-stock"><b>{product.stock}</b><small>unidades</small></span><span className={product.is_published ? "published" : "unpublished"}>{product.is_published ? "Publicado" : "Oculto"}</span></summary><ProductForm action={update} product={product} submitLabel="Guardar cambios" /></details>; })}</section></>;
+function ProductsSection({ products, query }: { products: (Product & { variants: Database["public"]["Tables"]["product_variants"]["Row"][] })[]; query: string }) {
+  return <><details className="new-product-panel"><summary><Plus size={18} /> Agregar producto</summary><ProductForm action={createProduct} submitLabel="Crear producto" /></details><AdminInventory products={products} query={query} updateAction={updateProduct} /></>;
 }
