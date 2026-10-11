@@ -241,6 +241,36 @@ button { cursor: pointer; }
 .tx-store .cart-trigger b { background: var(--tx-accent); color: #111; }
 
 /* Catálogo completo y filtros en teléfonos y tablets. */
+.inventory-search { display: grid; gap: 8px; margin: 24px 0 12px; }
+.inventory-search > label { font-size: 14px; font-weight: 700; color: #252525; }
+.inventory-search > div { display: flex; align-items: center; gap: 12px; padding-left: 14px; border: 1px solid #bdbdbd; background: #fff; }
+.inventory-search svg { flex: none; color: #555; }
+.inventory-search input { flex: 1; min-width: 0; min-height: 48px; padding: 10px 0; border: 0; outline: 0; background: transparent; font-size: 16px; color: #222; }
+.inventory-search > div:focus-within { outline: 2px solid #174e3c; outline-offset: 2px; }
+.inventory-search button { flex: none; min-height: 48px; padding: 10px 18px; border: 0; background: #174e3c; color: white; font-size: 14px; cursor: pointer; }
+.inventory-search > a { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; color: #174e3c; text-decoration: underline; font-size: 14px; }
+.inventory-results { margin: 12px 0; font-size: 14px; color: #555; }
+.inventory-no-results { padding: 24px; background: white; color: #555; }
+.inventory-item > summary { grid-template-columns: 20px minmax(0, 1fr) 148px 100px; }
+.inventory-name { min-width: 0; overflow-wrap: anywhere; }
+.inventory-stock { gap: 4px; padding: 10px; border-radius: 4px; }
+.inventory-unit-label { font-size: 12px; font-weight: 400; }
+.inventory-stock small { font-size: 12px; text-transform: none; color: inherit; }
+.inventory-stock.stock-good { color: #185a32; background: #e1f3e6; }
+.inventory-stock.stock-low { color: #725300; background: #fff0bc; }
+.inventory-stock.stock-empty { color: #a02121; background: #ffe3e3; }
+.status-dot.stock-good { background: #248044; }
+.status-dot.stock-low { background: #d39b00; }
+.status-dot.stock-empty { background: #c63333; }
+.inventory-good { border-left: 4px solid #248044; }
+.inventory-low { border-left: 4px solid #d39b00; }
+.inventory-empty { border-left: 4px solid #c63333; }
+@media (max-width: 800px) {
+  .inventory-item > summary { grid-template-columns: 12px minmax(0, 1fr) 110px; gap: 8px; }
+  .inventory-name b { font-size: 17px; }
+  .inventory-stock { padding: 8px; }
+  .inventory-search button { padding-inline: 12px; }
+}
 .rc2-catalog-page { padding-top: 84px; }
 .catalog-section { scroll-margin-top: 140px; }
 .catalog-filters { flex-wrap: wrap; }
