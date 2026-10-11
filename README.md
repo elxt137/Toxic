@@ -1,6 +1,16 @@
-# Toxic · v1.0.0
+# RC2 · Estética Vehicular · v1.0.0
 
-Vidriera pública de productos para el cuidado vehicular con catálogo filtrable, precios, disponibilidad y armado de pedido por WhatsApp. Incluye un panel privado para administrar productos, stock y publicación, autenticado con Google mediante Supabase y autorizado por whitelist.
+Vidriera pública de RC2 · Estética Vehicular: ceras, shampoo, cepillos, luces LED, microfibras y accesorios para el cuidado del auto. Cuenta con catálogo filtrable, precios, disponibilidad y armado de pedido por WhatsApp. Incluye un panel privado para administrar productos, stock y publicación, autenticado con Google mediante Supabase y autorizado por whitelist.
+
+## Navegación y verificación
+
+La aplicación de esta portada está en la raíz del repositorio. La carpeta `toxic/` es una copia independiente y no participa del lint ni de la compilación de la aplicación principal.
+
+Los accesos de categorías abren `/productos?categoria=...`; el buscador usa `/productos?q=...`. Se pueden combinar categoría, marca y texto, y limpiar los filtros. Mientras el esquema conserva las categorías de perfumes, los filtros de cuidado vehicular se calculan a partir del nombre del producto en `src/lib/catalog-navigation.ts`. La clasificación explícita en el inventario queda pendiente de una migración nueva. Las categorías vacías muestran un mensaje; no se anuncian ofertas sin datos de descuentos.
+
+El carrito resta y suma unidades hasta el stock disponible, descarta almacenamiento inválido y permite cerrar con Escape. Los videos aparecen únicamente cuando tienen un archivo cargado. Los botones de WhatsApp requieren el número comercial; no se publica un enlace de Instagram hasta contar con el perfil real.
+
+Para verificar: ejecutá `npm test` y `npm run check`. Para los flujos en navegador, iniciá un catálogo demo sin credenciales de Supabase con `npm run dev -- --port 3100` y ejecutá `npm run test:e2e` en otra terminal. La prueba usa Edge instalado, intercepta el pago sin realizar compras y revisa 320, 390, 768, 1024 y 1440 px. Se puede elegir otro navegador instalado con `RC2_BROWSER_CHANNEL` y otra URL con `RC2_TEST_URL`.
 
 ## Estado
 
@@ -32,7 +42,7 @@ Requiere Node.js 20.9 o superior. Para Hostinger se recomienda Node.js 22 o 24.
    NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
+NEXT_PUBLIC_WHATSAPP_NUMBER=5492984252129
    MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
    SUPABASE_SERVICE_ROLE_KEY=sb_secret_...
    ```

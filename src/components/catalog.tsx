@@ -9,18 +9,20 @@ import { ProductCard } from "@/components/product-card";
 import { FreeShippingProgress } from "@/components/free-shipping-progress";
 import { FreeShippingToast } from "@/components/free-shipping-toast";
 import { getCartRecommendations } from "@/lib/cart-recommendations";
+import { catalogCategories, filterCatalogProducts } from "@/lib/catalog-navigation";
+import { addCartItem, readCart, type CartItem } from "@/lib/cart";
 import type { ProductWithVariants } from "@/types/database";
 
-type CartItem = { product: ProductWithVariants; variantId: string; quantity: number };
 const cartStorageKey = "notta-cart";
 
 const money = (value: number) => new Intl.NumberFormat("es-AR", {
   style: "currency", currency: "ARS", maximumFractionDigits: 0,
 }).format(value);
 
-export function Catalog({ products, whatsappNumber }: { products: ProductWithVariants[]; whatsappNumber?: string }) {
+export function Catalog({ products, whatsappNumber, initialCategory = "", initialQuery = "" }: { products: ProductWithVariants[]; whatsappNumber?: string; initialCategory?: string; initialQuery?: string }) {
   const [brand, setBrand] = useState("Todas las marcas");
-  const [category, setCategory] = useState("Todos los tipos");
+  const [category, setCategory] = useState(initialCategory);
+  const [query, setQuery] = useState(initialQuery);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [open, setOpen] = useState(false);
   const [showShippingToast, setShowShippingToast] = useState(false);
@@ -43,7 +45,7 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
     }
     if (savedCart) {
       try {
-        const savedItems = JSON.parse(savedCart) as CartItem[];
+        const savedItems = readCart(savedCart);
         timeoutIds.push(window.setTimeout(() => setCart(savedItems), 0));
       } catch {
         window.localStorage.removeItem(cartStorageKey);
@@ -60,8 +62,11 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
     if (!open) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", closeOnEscape);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
     };
   }, [open]);
 
@@ -75,10 +80,7 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
   }, [cart]);
 
   const brands = useMemo(() => [...new Set(products.map((product) => product.brand))].sort(), [products]);
-  const filtered = products.filter((product) =>
-    (brand === "Todas las marcas" || product.brand === brand) &&
-    (category === "Todos los tipos" || product.category === category),
-  );
+  const filtered = filterCatalogProducts(products, { category, query, brand: brand === "Todas las marcas" ? undefined : brand });
   const featured = filtered.filter((product) => product.is_featured);
   const total = cart.reduce((sum, item) => sum + (item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0) * item.quantity, 0);
   const unitCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -87,18 +89,14 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
   function changeQuantity(id: string, amount: number) {
     setCart((items) => items.flatMap((item) => {
       if (item.variantId !== id) return [item];
-      const quantity = item.quantity + amount;
+      const stock = item.product.variants.find((variant) => variant.id === id)?.stock ?? 0;
+      const quantity = Math.min(item.quantity + amount, stock);
       return quantity > 0 ? [{ ...item, quantity }] : [];
     }));
   }
 
   function addRecommendation(product: ProductWithVariants, variantId: string) {
-    setCart((items) => {
-      const existing = items.find((item) => item.variantId === variantId);
-      return existing
-        ? items.map((item) => item.variantId === variantId ? { ...item, quantity: item.quantity + 1 } : item)
-        : [...items, { product, variantId, quantity: 1 }];
-    });
+    setCart((items) => addCartItem(items, product, variantId));
   }
 
   function addMoreProducts() {
@@ -129,13 +127,14 @@ export function Catalog({ products, whatsappNumber }: { products: ProductWithVar
     <>
       <section className="catalog-section shell" id="catalogo">
         <div className="catalog-heading"><div><p>Limpieza · Protección · Accesorios</p><h2>Todo para cuidar tu vehículo.</h2></div><button className="cart-trigger" type="button" onClick={() => setOpen(true)}><ShoppingBag size={18} /> Pedido <b>{unitCount}</b></button></div>
-        <div className="catalog-filters" aria-label="Filtros de catálogo"><span><SlidersHorizontal size={16} /> Filtros</span><select value={category} onChange={(event) => setCategory(event.target.value)}><option>Todos los tipos</option><option value="Decant">Limpieza y protección</option><option value="Frasco completo">Accesorios</option></select><select value={brand} onChange={(event) => setBrand(event.target.value)}><option>Todas las marcas</option>{brands.map((item) => <option key={item}>{item}</option>)}</select></div>
+        <div className="catalog-filters" aria-label="Filtros de catálogo"><span><SlidersHorizontal size={16} /> Filtros</span><select aria-label="Categoría" value={category} onChange={(event) => setCategory(event.target.value)}><option value="">Todas las categorías</option>{catalogCategories.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}{category && !catalogCategories.some((item) => item.id === category) && <option value={category}>Categoría seleccionada</option>}</select><select aria-label="Marca" value={brand} onChange={(event) => setBrand(event.target.value)}><option>Todas las marcas</option>{brands.map((item) => <option key={item}>{item}</option>)}</select><input type="search" aria-label="Buscar en el catálogo" placeholder="Nombre, marca o producto" value={query} onChange={(event) => setQuery(event.target.value)} />{(category || query || brand !== "Todas las marcas") && <button type="button" onClick={() => { setCategory(""); setQuery(""); setBrand("Todas las marcas"); }}>Limpiar filtros</button>}</div>
+        <p className="catalog-results" role="status">{filtered.length} producto{filtered.length === 1 ? "" : "s"}{query && ` para “${query}”`}</p>
         {featured.length > 0 && <CatalogShelf eyebrow="Destacados / más elegidos" products={featured} />}
         <CatalogShelf eyebrow="Todo el catálogo" products={filtered} empty={products.length ? "No encontramos productos con esos filtros." : "El catálogo se está preparando."} />
       </section>
       <aside className={`order-drawer ${open ? "is-open" : ""}`} id="pedido" aria-label="Tu pedido" aria-hidden={!open} inert={!open}>
         <div className="order-header"><div><p>Tu pedido</p><strong>{unitCount} producto{unitCount === 1 ? "" : "s"}</strong></div><button type="button" onClick={() => setOpen(false)} aria-label="Cerrar pedido"><X size={20} /></button></div>
-        <div className="order-lines">{cart.length === 0 ? <p className="order-empty">Todavía no agregaste productos a tu pedido.</p> : cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return <div className="order-line" key={variantId}><div className="order-line-image">{product.image_url ? <img src={product.image_url} alt={`Producto: ${product.name}`} /> : <div aria-hidden="true" />}</div><div className="order-line-details"><b>{product.brand}</b><span>{product.name} — {variant?.label}</span><small>{money(variant?.price ?? 0)}</small></div><div className="quantity"><button type="button" onClick={() => changeQuantity(variantId, -1)}><Minus size={13} /></button><span>{quantity}</span><button type="button" onClick={() => changeQuantity(variantId, 1)}><span>+</span></button></div></div>; })}</div>
+        <div className="order-lines">{cart.length === 0 ? <p className="order-empty">Todavía no agregaste productos a tu pedido.</p> : cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return <div className="order-line" key={variantId}><div className="order-line-image">{product.image_url ? <img src={product.image_url} alt={`Producto: ${product.name}`} /> : <div aria-hidden="true" />}</div><div className="order-line-details"><b>{product.brand}</b><span>{product.name} — {variant?.label}</span><small>{money(variant?.price ?? 0)}</small></div><div className="quantity"><button type="button" aria-label={`Restar ${product.name}`} onClick={() => changeQuantity(variantId, -1)}><Minus size={13} /></button><span>{quantity}</span><button type="button" aria-label={`Sumar ${product.name}`} disabled={quantity >= (variant?.stock ?? 0)} onClick={() => changeQuantity(variantId, 1)}><span>+</span></button></div></div>; })}</div>
         <div className="order-form"><div className="order-total"><span>Total</span><strong>{money(total)}</strong></div>{cart.length > 0 && <FreeShippingProgress total={total} />}<button className="mercadopago-button" type="button" onClick={() => router.push("/checkout")} disabled={!cart.length}><CreditCard size={16} /> Iniciar compra</button><button className="add-more-products" type="button" onClick={addMoreProducts}>Agregar más productos</button><button className="whatsapp-button" type="button" onClick={sendOrder} disabled={!cart.length || !whatsappNumber}><Send size={16} /> Enviar pedido por WhatsApp</button>{!whatsappNumber && <small>Falta configurar el número comercial de WhatsApp.</small>}</div>
         {cart.length > 0 && <CartRecommendations products={recommendations} onAdd={addRecommendation} />}
       </aside>

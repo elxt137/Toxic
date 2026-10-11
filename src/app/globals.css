@@ -224,7 +224,7 @@ button { cursor: pointer; }
 .card-bottle { border-radius: 14px; background: linear-gradient(135deg, #dbe3e7, #a7b4bc); }
 .card-bottle::before { display: none; }
 .card-bottle i { inset: 30% 12%; display: grid; place-items: center; background: #18242b; border: 0; }
-.card-bottle i::after { content: "TOXIC"; color: #fff; font: 700 18px sans-serif; letter-spacing: 2px; }
+.card-bottle i::after { content: "RC2"; color: #fff; font: 700 18px sans-serif; letter-spacing: 2px; }
 
 /* Portada estilo tienda con barra lateral */
 :root { --tx-accent: #f5a30a; --tx-accent-dark: #b77700; }
@@ -239,3 +239,26 @@ button { cursor: pointer; }
 .tx-store .catalog-heading h2 { font-size: clamp(30px, 3.4vw, 44px); }
 .tx-store .shelf-title h3 { font-size: 22px; }
 .tx-store .cart-trigger b { background: var(--tx-accent); color: #111; }
+
+/* Catálogo completo y filtros en teléfonos y tablets. */
+.rc2-catalog-page { padding-top: 84px; }
+.catalog-section { scroll-margin-top: 140px; }
+.catalog-filters { flex-wrap: wrap; }
+.catalog-filters input { min-width: 0; flex: 1 1 180px; min-height: 44px; padding: 10px 12px; border: 1px solid #ccc; background: #fff; color: #111; font: inherit; }
+.catalog-filters button { min-height: 44px; padding: 10px 14px; border: 1px solid #ccc; background: #fff; color: #111; }
+.catalog-filters select { min-height: 44px; max-width: 100%; }
+.catalog-results { color: #444; font-size: 14px; }
+.quantity button { min-width: 32px; min-height: 44px; }
+.quantity button:disabled { opacity: .4; cursor: not-allowed; }
+@media (max-width: 700px) {
+  .rc2-catalog-page { padding-top: 120px; }
+  .catalog-filters input { font-size: 16px; }
+  .catalog-filters select { flex: 1 1 160px; width: 100%; }
+  .catalog-heading { flex-wrap: wrap; gap: 16px; }
+  .order-drawer { width: min(440px, 100%); }
+  .notta-page .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
+  .notta-page .product-visual { height: 190px; }
+  .notta-page .buy-now { min-width: 0; width: 100%; }
+  .notta-page .product-prices span { max-width: 100%; white-space: normal; font-size: 12px; line-height: 1.4; }
+  .notta-page .product-info h3 { overflow-wrap: anywhere; }
+}

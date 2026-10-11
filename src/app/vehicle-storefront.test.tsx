@@ -13,7 +13,7 @@ afterEach(() => { cleanup(); window.localStorage.clear(); });
 describe("Toxic vehicle care storefront", () => {
   it("presents vehicle care branding and demo products on the home page", async () => {
     const { container } = render(await Home());
-    expect(screen.getByRole("link", { name: "Toxic, inicio" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "RC2 · Estética Vehicular, inicio" })).toBeTruthy();
     expect(screen.getByRole("heading", { level: 1 }).textContent).toContain("Tu auto impecable");
     expect(screen.getByRole("searchbox", { name: "Buscar productos" })).toBeTruthy();
     expect(container.textContent).not.toMatch(/perfumes|fragancia|decants|notta/i);
@@ -24,7 +24,7 @@ describe("Toxic vehicle care storefront", () => {
 
   it("filters vehicle care supplies and accessories using customer-facing categories", () => {
     render(<Catalog products={demoProducts} />);
-    fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "Frasco completo" } });
+    fireEvent.change(screen.getAllByRole("combobox")[0], { target: { value: "accesorios" } });
     expect(screen.getByRole("heading", { name: /Cepillo de detailing/ })).toBeTruthy();
     expect(screen.queryByRole("heading", { name: /Shampoo para autos/ })).toBeNull();
     expect(screen.getByRole("option", { name: "Accesorios" })).toBeTruthy();

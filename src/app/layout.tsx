@@ -8,7 +8,7 @@ const bodyFont = Quicksand({ subsets: ["latin"], variable: "--font-body" });
 const displayFont = Bebas_Neue({ subsets: ["latin"], weight: "400", variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: { default: "Toxic", template: "%s · Toxic" },
+  title: { default: "RC2 · Estética Vehicular", template: "%s · RC2" },
   description: "Productos para el cuidado vehicular: shampoo, ceras, cepillos, luces LED y microfibras.",
 };
 
