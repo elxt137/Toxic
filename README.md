@@ -16,6 +16,22 @@ Para verificar: ejecutá `npm test` y `npm run check`. Para los flujos en navega
 
 La base funcional está lista. Sin credenciales de Supabase, la portada muestra cinco productos demo de cuidado vehicular para revisar el diseño. Al configurar el proyecto, la vidriera consulta exclusivamente productos publicados y el panel usa datos reales.
 
+## Conexión de producción de RC2
+
+- Supabase: **Toxic**, ref `qtoibmsiqsgvnervnzjy`, URL `https://qtoibmsiqsgvnervnzjy.supabase.co`.
+- Sitio: `https://goldenrod-cassowary-586867.hostingersite.com`, desplegado desde `main` de `elxt137/Toxic`.
+- Antes de cualquier operación de Supabase, comprobar el ref de destino. El proyecto de perfumes no pertenece a RC2 y no debe usarse ni modificarse.
+- Las diez migraciones existentes se aplicaron el 11/10/2026 mediante `supabase db push`; sus versiones coinciden entre local y remoto. No se ejecutaron imports del catálogo anterior. Las seis tablas de la app tienen RLS activo, existe el bucket público `product-images` y el catálogo comienza vacío.
+- Google está habilitado con el cliente OAuth de RC2. El proveedor usa `https://qtoibmsiqsgvnervnzjy.supabase.co/auth/v1/callback` como URI autorizada en Google Cloud.
+- Auth Site URL: `https://goldenrod-cassowary-586867.hostingersite.com`. Redirect URLs: `https://goldenrod-cassowary-586867.hostingersite.com/auth/callback` y `http://localhost:3000/auth/callback`.
+- Los cuatro correos autorizados por el propietario están activos en `public.admin_allowlist`; Google verifica identidad y la lista concede permisos.
+
+En Hostinger, usar la URL y la clave **publishable del mismo proyecto Toxic**, junto con `NEXT_PUBLIC_SITE_URL` del sitio y `NEXT_PUBLIC_WHATSAPP_NUMBER=5492984252129`. Guardar `SUPABASE_SERVICE_ROLE_KEY` y `MERCADOPAGO_ACCESS_TOKEN` únicamente en el servidor, sin prefijo `NEXT_PUBLIC_`, si se habilita el checkout. Toda actualización de `NEXT_PUBLIC_*` requiere una compilación nueva. Las claves, tokens y credenciales Google no se guardan en Git ni en esta documentación.
+
+Después de desplegar, verificar el proyecto incrustado en los JS, las respuestas de home y catálogo, el retorno OAuth y el acceso autorizado/rechazado a `/admin`. El inicio de sesión real lo completa el propietario. El esquema aún conserva campos heredados: adaptar las categorías mediante migraciones nuevas.
+
+La revisión inicial reportó dos WARN de seguridad por `public.is_admin()` como función `SECURITY DEFINER` ejecutable por `anon` y `authenticated`; revisar el diseño sin desactivar RLS. Rendimiento reportó sólo INFO: una FK sin índice en `order_items.product_id` e índices aún sin uso en una base vacía.
+
 ## Stack
 
 - Next.js 16 (App Router, Server Components y Server Actions)
@@ -24,12 +40,20 @@ La base funcional está lista. Sin credenciales de Supabase, la portada muestra 
 - Google OAuth con PKCE y sesión en cookies
 - Hostinger Node.js Web App (SSR; no es exportación estática)
 
-Requiere Node.js 20.9 o superior. Para Hostinger se recomienda Node.js 22 o 24.
+Este repositorio requiere Node.js 24, también configurado en Hostinger.
 
 ## Puesta en marcha local
 
 1. Ejecutá `npm install`.
-2. Creá un proyecto en [Supabase](https://supabase.com/dashboard) y ejecutá en SQL Editor `supabase/migrations/20260911000000_initial_schema.sql`.
+2. Usá el proyecto **Toxic** de RC2. Para una base nueva, aplicá las migraciones con la CLI, conservando su historial:
+
+   ```bash
+   npx supabase link --project-ref qtoibmsiqsgvnervnzjy
+   npx supabase migration list --project-ref qtoibmsiqsgvnervnzjy
+   npx supabase db push --project-ref qtoibmsiqsgvnervnzjy --skip-vault
+   ```
+
+   No importar `supabase/import-legacy-catalog.sql` ni ejecutar `scripts/import-legacy-catalog.mjs`: corresponden al catálogo de perfumes.
 3. Agregá el primer administrador (el email debe coincidir con Google y estar en minúsculas):
 
    ```sql
@@ -39,7 +63,7 @@ Requiere Node.js 20.9 o superior. Para Hostinger se recomienda Node.js 22 o 24.
 4. Completá `.env.local`:
 
    ```dotenv
-   NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+   NEXT_PUBLIC_SUPABASE_URL=https://qtoibmsiqsgvnervnzjy.supabase.co
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_WHATSAPP_NUMBER=5492984252129
@@ -95,9 +119,17 @@ supabase/migrations/             # Esquema, funciones, RLS y bucket
 
 El checkout solicita los datos obligatorios de contacto y envío antes de crear la preferencia de Mercado Pago. Cada pedido conserva esos datos, sus ítems, su identificador y el identificador del pago, visibles desde el panel administrativo.
 
-## Migración pendiente para Notta Decants
+## Historial de migraciones de Toxic
 
-Además del esquema inicial, ejecutá `supabase/migrations/20260911000100_add_product_category.sql` en Supabase. Agrega el formato comercial de cada producto, necesario para los filtros de decants y frascos completos.
+Versiones aplicadas y verificadas con `supabase migration list`:
+
+```text
+20260911000000  20260911000100  20260920000200  20260922194323
+20260922202311  20260926000000  20260926214145  20260926222610
+20260928155720  20260928181538
+```
+
+No modificar las migraciones existentes. SQL y tipos TypeScript están sincronizados con ese esquema; los cambios futuros requieren migraciones nuevas.
 
 ## Comandos
 
