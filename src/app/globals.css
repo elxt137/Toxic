@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.checkout-benefit { display:flex; align-items:center; gap:20px; padding:18px; margin-top:24px; background:white; border:1px solid #ddd; border-radius:5px; }
+.checkout-benefit p { flex:1; font-size:14px; line-height:1.6; }
+@media (max-width:800px) { .checkout-benefit { flex-direction:column; align-items:stretch; } }
+
 :root {
   --ink: #1c211c;
   --muted: #667066;

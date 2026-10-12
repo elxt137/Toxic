@@ -56,6 +56,19 @@
 .admin-layout[data-admin-theme="dark"] :is(a, button, input, select, textarea, summary):focus-visible { outline-color: var(--admin-accent); }
 .admin-layout[data-admin-theme="dark"] .inventory-search > div:focus-within { outline-color: var(--admin-accent); }
 .admin-layout .labels-page { color-scheme: light; }
+.console-form .console-checkbox { display: flex; align-items: center; gap: 10px; }
+.console-form .console-checkbox input { width: 18px; min-height: 18px; height: 18px; }
+.console-form textarea { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #9aabbb; border-radius: 4px; font: inherit; }
+.admin-layout[data-admin-theme="dark"] .console-form textarea { background: #161618; color: var(--admin-ink); border-color: #6c6c76; }
+.crm-groups, .crm-contact-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+.crm-new-customer { margin: 20px 0; padding: 16px; border: 1px solid var(--admin-line); border-radius: 5px; }
+.crm-new-customer summary { cursor: pointer; font-weight: 600; }
+.crm-contact-form .form-message { grid-column: 1 / -1; }
+.crm-purchase { padding: 12px 0; }
+.crm-purchase ul { padding-left: 20px; line-height: 1.7; }
+.customer-history h3 { margin-top: 24px; font-weight: 600; }
+.admin-layout[data-admin-theme="dark"] .commerce-settings-panel { grid-column: 1 / -1; }
+@media (max-width: 800px) { .crm-groups, .crm-contact-form { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .admin-theme-track, .admin-theme-thumb { transition: none; } }
 .premium-admin { background: #f2f5f8; min-height: 100vh; }
 .premium-admin .admin-header { background: white; border-bottom: 1px solid var(--admin-line); }

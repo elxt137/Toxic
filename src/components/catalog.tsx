@@ -12,6 +12,8 @@ import { getCartRecommendations } from "@/lib/cart-recommendations";
 import { catalogCategories, filterCatalogProducts } from "@/lib/catalog-navigation";
 import { addCartItem, readCart, type CartItem } from "@/lib/cart";
 import type { ProductWithVariants } from "@/types/database";
+import { defaultCommerceSettings, type CommerceSettings } from "@/lib/shipping";
+import { discountedPrice, type CustomerBenefit } from "@/lib/crm";
 
 const cartStorageKey = "notta-cart";
 
@@ -19,7 +21,7 @@ const money = (value: number) => new Intl.NumberFormat("es-AR", {
   style: "currency", currency: "ARS", maximumFractionDigits: 0,
 }).format(value);
 
-export function Catalog({ products, whatsappNumber, initialCategory = "", initialQuery = "" }: { products: ProductWithVariants[]; whatsappNumber?: string; initialCategory?: string; initialQuery?: string }) {
+export function Catalog({ products, whatsappNumber, settings = defaultCommerceSettings, benefit = null, initialCategory = "", initialQuery = "" }: { products: ProductWithVariants[]; whatsappNumber?: string; settings?: CommerceSettings; benefit?: CustomerBenefit | null; initialCategory?: string; initialQuery?: string }) {
   const [brand, setBrand] = useState("Todas las marcas");
   const [category, setCategory] = useState(initialCategory);
   const [query, setQuery] = useState(initialQuery);
@@ -83,6 +85,7 @@ export function Catalog({ products, whatsappNumber, initialCategory = "", initia
   const filtered = filterCatalogProducts(products, { category, query, brand: brand === "Todas las marcas" ? undefined : brand });
   const featured = filtered.filter((product) => product.is_featured);
   const total = cart.reduce((sum, item) => sum + (item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0) * item.quantity, 0);
+  const discountedTotal = cart.reduce((sum,item) => sum + discountedPrice(item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0, benefit?.percent ?? 0) * item.quantity,0);
   const unitCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const recommendations = getCartRecommendations(products, new Set(cart.map((item) => item.product.id)));
 
@@ -106,7 +109,7 @@ export function Catalog({ products, whatsappNumber, initialCategory = "", initia
 
   function sendOrder() {
     const digits = (whatsappNumber ?? "").replace(/\D/g, "");
-    if (!digits || !cart.length) return;
+    if (!digits || !cart.length || !settings.cartWhatsappEnabled) return;
     const lines = cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return `• ${quantity} × ${product.brand} ${product.name} — ${variant?.label ?? "Presentación"} — ${money((variant?.price ?? 0) * quantity)}`; });
     const message = ["Hola, quiero hacer este pedido:", "", ...lines, "", `Total: ${money(total)}`].join("\n");
     window.open(`https://wa.me/${digits}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
@@ -135,11 +138,11 @@ export function Catalog({ products, whatsappNumber, initialCategory = "", initia
       <aside className={`order-drawer ${open ? "is-open" : ""}`} id="pedido" aria-label="Tu pedido" aria-hidden={!open} inert={!open}>
         <div className="order-header"><div><p>Tu pedido</p><strong>{unitCount} producto{unitCount === 1 ? "" : "s"}</strong></div><button type="button" onClick={() => setOpen(false)} aria-label="Cerrar pedido"><X size={20} /></button></div>
         <div className="order-lines">{cart.length === 0 ? <p className="order-empty">Todavía no agregaste productos a tu pedido.</p> : cart.map(({ product, variantId, quantity }) => { const variant = product.variants.find((item) => item.id === variantId); return <div className="order-line" key={variantId}><div className="order-line-image">{product.image_url ? <img src={product.image_url} alt={`Producto: ${product.name}`} /> : <div aria-hidden="true" />}</div><div className="order-line-details"><b>{product.brand}</b><span>{product.name} — {variant?.label}</span><small>{money(variant?.price ?? 0)}</small></div><div className="quantity"><button type="button" aria-label={`Restar ${product.name}`} onClick={() => changeQuantity(variantId, -1)}><Minus size={13} /></button><span>{quantity}</span><button type="button" aria-label={`Sumar ${product.name}`} disabled={quantity >= (variant?.stock ?? 0)} onClick={() => changeQuantity(variantId, 1)}><span>+</span></button></div></div>; })}</div>
-        <div className="order-form"><div className="order-total"><span>Total</span><strong>{money(total)}</strong></div>{cart.length > 0 && <FreeShippingProgress total={total} />}<button className="mercadopago-button" type="button" onClick={() => router.push("/checkout")} disabled={!cart.length}><CreditCard size={16} /> Iniciar compra</button><button className="add-more-products" type="button" onClick={addMoreProducts}>Agregar más productos</button><button className="whatsapp-button" type="button" onClick={sendOrder} disabled={!cart.length || !whatsappNumber}><Send size={16} /> Enviar pedido por WhatsApp</button>{!whatsappNumber && <small>Falta configurar el número comercial de WhatsApp.</small>}</div>
+        <div className="order-form"><div className="order-total"><span>Total de lista</span><strong>{money(total)}</strong></div>{benefit && benefit.percent > 0 && <p>Con tu beneficio {benefit.groupName} ({benefit.percent}%): {money(discountedTotal)} al pagar con Mercado Pago.</p>}{cart.length > 0 && <FreeShippingProgress total={discountedTotal} settings={settings} />}<button className="mercadopago-button" type="button" onClick={() => router.push("/checkout")} disabled={!cart.length}><CreditCard size={16} /> Iniciar compra</button><button className="add-more-products" type="button" onClick={addMoreProducts}>Agregar más productos</button>{settings.cartWhatsappEnabled && <button className="whatsapp-button" type="button" onClick={sendOrder} disabled={!cart.length || !whatsappNumber}><Send size={16} /> Enviar pedido por WhatsApp</button>}{settings.cartWhatsappEnabled && !whatsappNumber && <small>Falta configurar el número comercial de WhatsApp.</small>}</div>
         {cart.length > 0 && <CartRecommendations products={recommendations} onAdd={addRecommendation} />}
       </aside>
       {open && <button className="drawer-backdrop" type="button" aria-label="Cerrar pedido" onClick={() => setOpen(false)} />}
-      {showShippingToast && !open && cart.length > 0 && <FreeShippingToast total={total} onDismiss={() => setShowShippingToast(false)} />}
+      {showShippingToast && !open && cart.length > 0 && <FreeShippingToast total={discountedTotal} settings={settings} onDismiss={() => setShowShippingToast(false)} />}
     </>
   );
 }

@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+const { benefit, writes } = vi.hoisted(() => ({ benefit: vi.fn(), writes: vi.fn() }));
+vi.mock("@/lib/customer-benefit", () => ({ getCustomerBenefit: benefit }));
 
 const productId = "11111111-1111-4111-8111-111111111111";
 const variantId = "22222222-2222-4222-8222-222222222222";
@@ -7,6 +9,7 @@ const tableData: Record<string, unknown> = {
   product_variants: [{ id: variantId, product_id: productId, label: "1.2 ml", price: 6240, stock: 5, is_active: true }],
   orders: { id: "order-1" },
   order_items: null,
+  storefront_settings: { free_shipping_enabled: true, free_shipping_threshold: 100000, free_shipping_destination: "branch", cart_whatsapp_enabled: true },
 };
 
 // Builder encadenable que resuelve con los datos de la tabla consultada.
@@ -15,7 +18,8 @@ function query(table: string) {
   const builder: Record<string, unknown> = {
     then: (resolve: (value: typeof result) => unknown) => resolve(result),
   };
-  for (const method of ["select", "in", "eq", "insert", "update", "single"]) builder[method] = () => builder;
+  for (const method of ["select", "in", "eq", "update", "single", "maybeSingle"]) builder[method] = () => builder;
+  builder.insert = (value: unknown) => { writes(table,value); return builder; };
   return builder;
 }
 
@@ -36,6 +40,8 @@ describe("Mercado Pago preference", () => {
   const fetchMock = vi.fn();
 
   beforeEach(() => {
+    benefit.mockReset().mockResolvedValue(null); writes.mockClear();
+    tableData.storefront_settings={ free_shipping_enabled:true,free_shipping_threshold:100000,free_shipping_destination:"branch",cart_whatsapp_enabled:true };
     vi.stubEnv("MERCADOPAGO_ACCESS_TOKEN", "test-token");
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ id: "pref-1", init_point: "https://mp.example/checkout" }), { status: 201 }));
@@ -56,5 +62,35 @@ describe("Mercado Pago preference", () => {
     expect(preference.back_urls.success).toBe("https://tienda.example.com/pago/resultado?status=success");
     expect(preference.back_urls.failure).toBe("https://tienda.example.com/pago/resultado?status=failure");
     expect(preference.notification_url).toBe("https://tienda.example.com/api/payments/webhook");
+  });
+  it("applies the verified customer's group discount to the payment and persisted item prices", async () => {
+    benefit.mockResolvedValue({ email: "ana@example.com", groupId: productId, groupName: "Profesional", percent: 15 });
+    expect((await POST(checkoutRequest())).status).toBe(200);
+    const preference = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(preference.items[0].unit_price).toBe(5304);
+    expect(writes).toHaveBeenCalledWith("orders",expect.objectContaining({ subtotal: 6240, total: 5304, discount_amount: 936, group_discount_percent: 15, free_shipping_qualified: false }));
+    expect(writes).toHaveBeenCalledWith("order_items",[expect.objectContaining({ list_unit_price: 6240, unit_price: 5304 })]);
+  });
+  it("rejects a mismatch between the verified discount identity and the submitted email", async () => {
+    benefit.mockResolvedValue({ email: "other@example.invalid", groupId: productId, groupName: "Profesional", percent: 15 });
+    expect((await POST(checkoutRequest())).status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(writes).not.toHaveBeenCalled();
+  });
+  it("does not infer discounts from the guest's submitted email", async () => {
+    expect((await POST(checkoutRequest())).status).toBe(200);
+    const preference = JSON.parse(fetchMock.mock.calls[0][1].body as string);
+    expect(preference.items[0].unit_price).toBe(6240);
+    expect(writes).toHaveBeenCalledWith("orders",expect.objectContaining({ group_discount_percent: 0 }));
+  });
+  it("persists the configured free-shipping eligibility and destination", async () => {
+    tableData.storefront_settings={ free_shipping_enabled:true,free_shipping_threshold:6240,free_shipping_destination:"home",cart_whatsapp_enabled:true };
+    expect((await POST(checkoutRequest())).status).toBe(200);
+    expect(writes).toHaveBeenCalledWith("orders",expect.objectContaining({ free_shipping_qualified:true,free_shipping_threshold:6240,shipping_destination:"home" }));
+  });
+  it("does not grant disabled free shipping even above the minimum", async () => {
+    tableData.storefront_settings={ free_shipping_enabled:false,free_shipping_threshold:100,free_shipping_destination:"branch",cart_whatsapp_enabled:true };
+    expect((await POST(checkoutRequest())).status).toBe(200);
+    expect(writes).toHaveBeenCalledWith("orders",expect.objectContaining({ free_shipping_qualified:false }));
   });
 });

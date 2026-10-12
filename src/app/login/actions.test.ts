@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const signInWithOAuth = vi.fn();
 const requestHeaders = new Headers({ host: "tienda.example.com" });
 
-vi.mock("next/headers", () => ({ headers: async () => requestHeaders }));
+vi.mock("next/headers", () => ({ headers: async () => requestHeaders,cookies:async () => ({ delete:vi.fn() }) }));
 vi.mock("next/navigation", () => ({
   redirect: (url: string) => {
     throw new Error(`REDIRECT:${url}`);

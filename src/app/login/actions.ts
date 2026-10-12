@@ -1,6 +1,6 @@
 "use server";
 
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getSiteUrl, getSupabaseConfig } from "@/lib/env";
@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function signInWithGoogle() {
   if (!getSupabaseConfig()) redirect("/login?error=not-configured");
+  (await cookies()).delete("rc2_customer_checkout");
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
