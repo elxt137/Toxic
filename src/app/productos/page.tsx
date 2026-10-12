@@ -1,14 +1,14 @@
 import { Catalog } from "@/components/catalog";
 import { StorefrontHeader } from "@/components/storefront-header";
 import { getPublishedProducts } from "@/lib/products";
-import { getWhatsappNumber } from "@/lib/store-contact";
+import { getStoreWhatsappNumber } from "@/lib/storefront";
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ categoria?: string | string[]; q?: string | string[] }> }) {
   const params = await searchParams;
   let products: Awaited<ReturnType<typeof getPublishedProducts>> = [];
   let unavailable = false;
   try { products = await getPublishedProducts(); } catch { unavailable = true; }
-  const whatsappNumber = getWhatsappNumber();
+  const whatsappNumber = await getStoreWhatsappNumber();
 
   return (
     <main className="notta-page rc2-catalog-page">

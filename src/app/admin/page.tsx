@@ -2,11 +2,13 @@ import { ExternalLink, Gauge, LogOut, Package, Palette, Plus, Truck, Users, Tick
 import Link from "next/link";
 import { ProductForm } from "@/components/product-form";
 import { AdminInventory } from "@/components/admin-inventory";
+import { WhatsappSettings } from "@/components/admin/whatsapp-settings";
 import { DashboardPanel, OrdersPanel, CustomersPanel, MarketingPanel } from "@/components/admin/console-panels";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { readAllOrders, readAllOrderItems } from "@/lib/admin-orders";
 import { defaultAnnouncement } from "@/lib/storefront";
+import { getWhatsappNumber } from "@/lib/store-contact";
 import { createProduct, updateAnnouncement, updateProduct } from "./actions";
 
 const sections = {
@@ -29,7 +31,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const [productResult, variantResult, settings, orders, items, metadata, coupons] = await Promise.all([
     client.from("products").select("*").order("sort_order").order("created_at", { ascending: false }),
     client.from("product_variants").select("*").order("sort_order").order("created_at"),
-    client.from("storefront_settings").select("announcement_text").eq("id", true).maybeSingle(),
+    client.from("storefront_settings").select("announcement_text,whatsapp_number").eq("id", true).maybeSingle(),
     readAllOrders(client),
     readAllOrderItems(client),
     client.from("product_admin_data").select("*"),
@@ -50,7 +52,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         {section === "clients" && <CustomersPanel orders={orders} query={query} />}
         {section === "marketing" && <MarketingPanel coupons={coupons.data ?? []} />}
         {section === "products" && <><details className="new-product-panel"><summary><Plus size={18} /> Agregar producto</summary><ProductForm action={createProduct} submitLabel="Crear producto" /></details><AdminInventory products={products} query={query} updateAction={updateProduct} privateData={metadata.data ?? []} /></>}
-        {section === "customization" && <section className="console-panel"><h2>Mensaje de la barra superior</h2><p className="console-note">Actualizá la promoción que ven tus clientes al entrar a la tienda.</p><form className="console-form" action={updateAnnouncement}><label>Mensaje promocional<input name="announcement_text" defaultValue={settings.data?.announcement_text ?? defaultAnnouncement} required maxLength={240} /></label><button className="admin-button" type="submit">Guardar mensaje</button></form></section>}
+        {section === "customization" && <>
+          <section className="console-panel"><h2>Mensaje de la barra superior</h2><p className="console-note">Actualizá la promoción que ven tus clientes al entrar a la tienda.</p><form className="console-form" action={updateAnnouncement}><label>Mensaje promocional<input name="announcement_text" defaultValue={settings.data?.announcement_text ?? defaultAnnouncement} required maxLength={240} /></label><button className="admin-button" type="submit">Guardar mensaje</button></form></section>
+          <WhatsappSettings currentNumber={settings.data?.whatsapp_number ?? getWhatsappNumber()} />
+        </>}
       </section>
     </div>
   </main>;

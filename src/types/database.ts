@@ -22,8 +22,8 @@ export type Database = {
         Relationships: [];
       };
       storefront_settings: {
-        Row: { id: boolean; announcement_text: string; updated_at: string };
-        Insert: { id?: boolean; announcement_text?: string; updated_at?: string };
+        Row: { id: boolean; announcement_text: string; whatsapp_number: string | null; updated_at: string };
+        Insert: { id?: boolean; announcement_text?: string; whatsapp_number?: string | null; updated_at?: string };
         Update: { announcement_text?: string };
         Relationships: [];
       };
@@ -205,6 +205,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      update_store_whatsapp: { Args: { p_number: string; p_password: string }; Returns: boolean };
       reserve_order_coupon: { Args: { p_order_id: string; p_code: string }; Returns: number };
       is_admin: { Args: never; Returns: boolean };
       confirm_order_payment: {
