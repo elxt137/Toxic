@@ -15,7 +15,7 @@ beforeEach(() => {
     const data = table === "products" ? demoProducts : table === "product_variants" ? demoProducts.flatMap((p) => p.variants) : table === "storefront_settings" ? null : [];
     const result = { data, error: null };
     const builder: Record<string, unknown> = { then: (resolve: (value: unknown) => void) => resolve(result) };
-    for (const key of ["select", "order", "eq", "maybeSingle", "limit"]) builder[key] = () => builder;
+    for (const key of ["select", "order", "eq", "maybeSingle", "limit", "range"]) builder[key] = () => builder;
     return builder;
   } });
 });
