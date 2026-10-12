@@ -68,6 +68,9 @@
 .product-barcode-preview svg { max-width: 240px; height: 65px; }
 .new-product-panel { padding: 20px; border: 1px solid var(--admin-line); background: white; border-radius: 6px; }
 .new-product-panel > summary { display: flex; gap: 10px; align-items: center; cursor: pointer; font-weight: 600; }
+.inventory-product { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.inventory-thumbnail { width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid var(--admin-line); border-radius: 5px; object-fit: contain; background: white; }
+.inventory-thumbnail-empty { display: grid; place-items: center; color: var(--admin-muted); background: #f2f5f8; }
 .labels-page { padding: 24px; background: white; color: black; }
 .label-controls { display: grid; justify-items: start; gap: 16px; margin-bottom: 24px; }
 .label-sheet { display: flex; flex-wrap: wrap; gap: 4mm; }
@@ -93,6 +96,9 @@
   .console-order summary > div:first-child { flex-basis: 100%; }
 }
 @media (max-width: 480px) {
+  .inventory-item > summary { grid-template-columns: 12px minmax(0, 1fr); padding-inline: 14px; }
+  .inventory-product, .inventory-stock { grid-column: 2; }
+  .inventory-stock { justify-self: start; }
   .console-kpis { gap: 10px; }
   .console-kpis article, .console-panel { padding: 16px; }
   .workflow-form, .private-product-form, .coupon-generator, .customer-search { grid-template-columns: 1fr; }

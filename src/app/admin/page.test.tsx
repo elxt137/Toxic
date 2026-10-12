@@ -22,6 +22,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("authorized inventory route", () => {
+  it("offers a password-protected WhatsApp form in customization", async () => {
+    render(await AdminPage({ searchParams: Promise.resolve({ section: "customization" }) }));
+    expect(screen.getByRole("heading", { name: "WhatsApp de la tienda" })).toBeTruthy();
+    expect(screen.getByLabelText("Número de WhatsApp").getAttribute("type")).toBe("tel");
+    expect(screen.getByLabelText("Contraseña de personalización").getAttribute("type")).toBe("password");
+    expect(screen.getByLabelText("Contraseña de personalización").hasAttribute("required")).toBe(true);
+    expect(screen.getByRole("button", { name: "Guardar WhatsApp" })).toBeTruthy();
+  });
   it("passes the requested query to inventory while retaining the products section", async () => {
     render(await AdminPage({ searchParams: Promise.resolve({ section: "products", q: "cera" }) }));
     expect(screen.getByRole("heading", { name: "Productos e inventario" })).toBeTruthy();

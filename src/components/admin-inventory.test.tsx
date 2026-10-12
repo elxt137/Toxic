@@ -7,6 +7,19 @@ vi.mock("@/components/product-form", () => ({ ProductForm: ({ product }: { produ
 afterEach(cleanup);
 const updateAction = vi.fn(async () => {});
 describe("admin inventory", () => {
+  it("shows a compact product photo alongside the inventory name", () => {
+    const product = { ...demoProducts[0], image_url: "https://example.invalid/product.jpg" };
+    render(<AdminInventory products={[product]} updateAction={updateAction} />);
+    const image = screen.getByRole("img", { name: product.name });
+    expect(image.getAttribute("src")).toBe(product.image_url);
+    expect(image.getAttribute("width")).toBe("48");
+    expect(image.getAttribute("height")).toBe("48");
+  });
+  it("shows a placeholder when a product has no photo", () => {
+    render(<AdminInventory products={[{ ...demoProducts[0], image_url: null }]} updateAction={updateAction} />);
+    expect(screen.getByLabelText("Producto sin foto")).toBeTruthy();
+    expect(screen.getByRole("img").tagName).toBe("SPAN");
+  });
   it("searches the inventory while retaining the products section and edit forms", () => {
     const { container } = render(<AdminInventory products={demoProducts} query="cera" updateAction={updateAction} />);
     expect((screen.getByRole("searchbox", { name: "Buscar productos del inventario" }) as HTMLInputElement).value).toBe("cera");
