@@ -3,20 +3,23 @@ import Link from "next/link";
 import { ProductForm } from "@/components/product-form";
 import { filterInventory, getInventoryStock, getStockStatus } from "@/lib/inventory";
 import type { ProductWithVariants } from "@/types/database";
+import type { Database } from "@/types/database";
+import { PrivateProductFields } from "@/components/admin/private-product-fields";
 
 type Props = {
   products: ProductWithVariants[];
   query?: string;
   updateAction: (id: string, formData: FormData) => void | Promise<void>;
+  privateData?: Database["public"]["Tables"]["product_admin_data"]["Row"][];
 };
 
-export function AdminInventory({ products, query = "", updateAction }: Props) {
-  const filtered = filterInventory(products, query);
+export function AdminInventory({ products, query = "", updateAction, privateData }: Props) {
+  const filtered = filterInventory(products.map((product) => ({ ...product, barcode: privateData?.find((entry) => entry.product_id === product.id)?.barcode })), query);
   return <>
     <form action="/admin" method="get" role="search" aria-label="Buscar en inventario" className="inventory-search">
       <input type="hidden" name="section" value="products" />
       <label htmlFor="inventory-search">Buscar productos del inventario</label>
-      <div><Search size={18} aria-hidden="true" /><input id="inventory-search" name="q" type="search" defaultValue={query} placeholder="Nombre o marca del producto" /><button type="submit">Buscar</button></div>
+      <div><Search size={18} aria-hidden="true" /><input id="inventory-search" name="q" type="search" defaultValue={query} placeholder="Nombre, marca o código de barras" /><button type="submit">Buscar</button></div>
       {query.trim() && <Link href="/admin?section=products">Limpiar búsqueda</Link>}
     </form>
     <p className="inventory-results" role="status">{filtered.length} de {products.length} productos</p>
@@ -34,6 +37,7 @@ export function AdminInventory({ products, query = "", updateAction }: Props) {
             <span className={product.is_published ? "published" : "unpublished"}>{product.is_published ? "Publicado" : "Oculto"}</span>
           </summary>
           <ProductForm action={updateAction.bind(null, product.id)} product={product} submitLabel="Guardar cambios" />
+          {privateData && <PrivateProductFields id={product.id} salePrice={product.variants.find((variant) => variant.is_active)?.price ?? product.price} metadata={privateData.find((entry) => entry.product_id === product.id)} />}
         </details>;
       })}
     </section>

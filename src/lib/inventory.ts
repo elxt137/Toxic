@@ -1,10 +1,10 @@
-type SearchableProduct = { name: string; brand: string; slug: string };
+type SearchableProduct = { name: string; brand: string; slug: string; barcode?: string | null };
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
 export function filterInventory<T extends SearchableProduct>(products: T[], query: string) {
   const words = normalize(query).split(/\s+/).filter(Boolean);
   return products.filter((product) => {
-    const text = normalize(`${product.name} ${product.brand} ${product.slug}`);
+    const text = normalize(`${product.name} ${product.brand} ${product.slug} ${product.barcode ?? ""}`);
     return words.every((word) => text.includes(word));
   });
 }
