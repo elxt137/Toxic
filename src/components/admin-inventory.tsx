@@ -32,7 +32,14 @@ export function AdminInventory({ products, query = "", updateAction, privateData
         return <details className={`inventory-item inventory-${status.id}`} data-stock-status={status.id} key={product.id}>
           <summary>
             <span className={`status-dot stock-${status.id}`} aria-hidden="true" />
-            <span className="inventory-name"><b>{product.name}</b><small>{product.brand}</small></span>
+            <span className="inventory-product">
+              {product.image_url ? (
+                // Product image URLs can come from any public catalog host.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img className="inventory-thumbnail" src={product.image_url} alt={product.name} width={48} height={48} loading="lazy" />
+              ) : <span className="inventory-thumbnail inventory-thumbnail-empty" role="img" aria-label="Producto sin foto"><Package size={22} aria-hidden="true" /></span>}
+              <span className="inventory-name"><b>{product.name}</b><small>{product.brand}</small></span>
+            </span>
             <span className={`inventory-stock stock-${status.id}`}><b>{stock} <span className="inventory-unit-label">unidades</span></b><small>{status.label}</small></span>
             <span className={product.is_published ? "published" : "unpublished"}>{product.is_published ? "Publicado" : "Oculto"}</span>
           </summary>

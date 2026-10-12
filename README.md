@@ -182,6 +182,12 @@ Antes de usar este panel, aplicá la migración nueva `supabase/migrations/20261
 
 La generación, activación e impresión de cupones está implementada en el panel. Su aplicación en el checkout todavía está pendiente: generar un código no hace que la compra pública lo acepte. La migración incluye la función de reserva de usos para esa integración futura. La migración y los permisos deben verificarse en staging antes de publicar.
 
+## Fotos del inventario y WhatsApp de la tienda
+
+El inventario muestra miniaturas de 48 × 48 px y un indicador cuando el producto no tiene foto. En `/admin?section=customization` podés cambiar el número comercial de WhatsApp con formato internacional y la contraseña de personalización. El número guardado se usa en la portada, el catálogo, el pie y los pedidos por WhatsApp; si aún no hay uno, se conserva `NEXT_PUBLIC_WHATSAPP_NUMBER` como respaldo.
+
+Aplicá `supabase/migrations/20261012024218_protected_store_whatsapp.sql`. La contraseña se provisiona por separado como un hash bcrypt en `store_private.whatsapp_credentials`; no debe guardarse en archivos ni exponerse al cliente. La función `update_store_whatsapp` exige administrador autorizado y contraseña correcta. Los permisos de columna impiden saltear esa verificación actualizando el número directamente; editar el anuncio sigue permitido. `supabase/tests/protected_store_whatsapp.sql` verifica el flujo con credenciales ficticias y revierte todos los cambios al terminar.
+
 ## Adaptación de la vidriera a Toxic
 
 La portada, el catálogo, el pedido y el panel usan textos de cuidado vehicular. Los productos y precios demo son ilustrativos. La interfaz muestra las categorías Limpieza y protección y Accesorios; por compatibilidad conserva los valores históricos Decant y Frasco completo en la base de datos. No se modificaron productos existentes ni se requiere una migración para este cambio de textos.
