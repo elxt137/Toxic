@@ -1,7 +1,10 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render as renderComponent, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AdminPage from "./page";
 import { demoProducts } from "@/lib/products";
+import { AdminThemeProvider } from "@/components/admin/admin-theme";
+
+const render = (node: React.ReactNode) => renderComponent(<AdminThemeProvider initialTheme="light">{node}</AdminThemeProvider>);
 
 const { authorize, client } = vi.hoisted(() => ({ authorize: vi.fn(), client: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ requireAdmin: authorize }));
