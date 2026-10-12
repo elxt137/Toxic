@@ -174,6 +174,14 @@ Hostinger documenta soporte de SSR, ISR y rutas API en su [hosting de Next.js](h
 - Canal de consulta/compra, una vez definido el flujo comercial.
 - Pruebas end-to-end con un Supabase de staging.
 
+## Panel administrativo ampliado (en desarrollo)
+
+El panel incorpora ventas aprobadas por día y mes en horario argentino, alertas de stock, historial de compradores, seguimiento de envíos y estados internos de pedidos. Los costos y códigos de barras se guardan en `product_admin_data`, protegida por RLS y separada del catálogo público. `/admin/labels` permite imprimir etiquetas de productos y cupones de 38 × 21 mm, con códigos Code 128.
+
+Antes de usar este panel, aplicá la migración nueva `supabase/migrations/20261012015501_premium_admin_console.sql` después de las anteriores. No reescribas migraciones desplegadas. Todas las mutaciones administrativas requieren `requireAdmin()` y validan entradas con Zod.
+
+La generación, activación e impresión de cupones está implementada en el panel. Su aplicación en el checkout todavía está pendiente: generar un código no hace que la compra pública lo acepte. La migración incluye la función de reserva de usos para esa integración futura. La migración y los permisos deben verificarse en staging antes de publicar.
+
 ## Adaptación de la vidriera a Toxic
 
 La portada, el catálogo, el pedido y el panel usan textos de cuidado vehicular. Los productos y precios demo son ilustrativos. La interfaz muestra las categorías Limpieza y protección y Accesorios; por compatibilidad conserva los valores históricos Decant y Frasco completo en la base de datos. No se modificaron productos existentes ni se requiere una migración para este cambio de textos.
