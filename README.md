@@ -186,6 +186,8 @@ La generación, activación e impresión de cupones está implementada en el pan
 
 El interruptor **Modo oscuro** en la cabecera cambia la paleta de todas las secciones administrativas. La preferencia se guarda durante un año en una cookie limitada a `/admin` y se restaura al cargar la página. La tienda pública conserva su apariencia y las etiquetas se imprimen con fondo blanco. El interruptor funciona con teclado y respeta la preferencia de movimiento reducido.
 
+La apariencia oscura sigue la referencia visual de documentación: fondo grafito, navegación lateral casi negra con acentos lavanda, estados verdes, tipografía sans serif y separadores finos. En escritorio la cabecera y la navegación acompañan el desplazamiento; en celulares las secciones se recorren en una barra horizontal.
+
 `npm test` incluye verificaciones de contraste y ancho del panel en un navegador local sin acceso a red. Usan Microsoft Edge por defecto; podés seleccionar otro canal de Chromium con `RC2_BROWSER_CHANNEL`. Las capturas de QA quedan en `.npm-cache/admin-theme-qa` y no se suben al repositorio.
 
 El inventario muestra miniaturas de 48 × 48 px y un indicador cuando el producto no tiene foto. En `/admin?section=customization` podés cambiar el número comercial de WhatsApp con formato internacional y la contraseña de personalización. El número guardado se usa en la portada, el catálogo, el pie y los pedidos por WhatsApp; si aún no hay uno, se conserva `NEXT_PUBLIC_WHATSAPP_NUMBER` como respaldo.
