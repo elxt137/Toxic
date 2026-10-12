@@ -7,7 +7,8 @@ const benefitSchema = z.object({ group_id: z.string().uuid(), group_name: z.stri
 export async function getCustomerBenefit(): Promise<CustomerBenefit | null> {
   if (!getSupabaseConfig()) return null;
   const client = await createClient();
-  const { data: { user } } = await client.auth.getUser();
+  const { data: { user }, error: authError } = await client.auth.getUser();
+  if(authError && authError.name !== "AuthSessionMissingError") throw new Error("No se pudo verificar la sesión del cliente. Volvé a verificar tu correo con Google.");
   if (!user?.email || !user.email_confirmed_at) return null;
   const { data, error } = await client.rpc("get_my_customer_benefit", {});
   if (error) throw new Error("No se pudo verificar el beneficio del cliente. Probá de nuevo.");
