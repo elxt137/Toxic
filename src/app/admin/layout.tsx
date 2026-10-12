@@ -1,4 +1,9 @@
 import "./admin.css";
+import { cookies } from "next/headers";
+import { AdminThemeProvider } from "@/components/admin/admin-theme";
 // Authentication and private data must be evaluated for each request.
 export const dynamic = "force-dynamic";
-export default function AdminLayout({ children }: { children: React.ReactNode }) { return <div className="admin-layout">{children}</div>; }
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const saved = (await cookies()).get("rc2_admin_theme")?.value;
+  return <AdminThemeProvider initialTheme={saved === "dark" ? "dark" : "light"}>{children}</AdminThemeProvider>;
+}

@@ -184,6 +184,10 @@ La generación, activación e impresión de cupones está implementada en el pan
 
 ## Fotos del inventario y WhatsApp de la tienda
 
+El interruptor **Modo oscuro** en la cabecera cambia la paleta de todas las secciones administrativas. La preferencia se guarda durante un año en una cookie limitada a `/admin` y se restaura al cargar la página. La tienda pública conserva su apariencia y las etiquetas se imprimen con fondo blanco. El interruptor funciona con teclado y respeta la preferencia de movimiento reducido.
+
+`npm test` incluye verificaciones de contraste y ancho del panel en un navegador local sin acceso a red. Usan Microsoft Edge por defecto; podés seleccionar otro canal de Chromium con `RC2_BROWSER_CHANNEL`. Las capturas de QA quedan en `.npm-cache/admin-theme-qa` y no se suben al repositorio.
+
 El inventario muestra miniaturas de 48 × 48 px y un indicador cuando el producto no tiene foto. En `/admin?section=customization` podés cambiar el número comercial de WhatsApp con formato internacional y la contraseña de personalización. El número guardado se usa en la portada, el catálogo, el pie y los pedidos por WhatsApp; si aún no hay uno, se conserva `NEXT_PUBLIC_WHATSAPP_NUMBER` como respaldo.
 
 Aplicá `supabase/migrations/20261012024218_protected_store_whatsapp.sql`. La contraseña se provisiona por separado como un hash bcrypt en `store_private.whatsapp_credentials`; no debe guardarse en archivos ni exponerse al cliente. La función `update_store_whatsapp` exige administrador autorizado y contraseña correcta. Los permisos de columna impiden saltear esa verificación actualizando el número directamente; editar el anuncio sigue permitido. `supabase/tests/protected_store_whatsapp.sql` verifica el flujo con credenciales ficticias y revierte todos los cambios al terminar.

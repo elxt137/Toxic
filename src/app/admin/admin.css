@@ -1,4 +1,62 @@
 .admin-layout { --admin-ink: #203044; --admin-muted: #526378; --admin-accent: #215d91; --admin-line: #d7e0e9; font-family: "Segoe UI", Arial, sans-serif; color: var(--admin-ink); }
+.admin-layout { --admin-background: #f2f5f8; --admin-surface: #fff; --admin-soft: #e6edf5; color-scheme: light; }
+.admin-layout[data-admin-theme="dark"] {
+  --admin-background: #111c29;
+  --admin-surface: #1b2a3c;
+  --admin-soft: #24364b;
+  --admin-ink: #e7edf5;
+  --admin-muted: #b1c2d3;
+  --admin-accent: #93c8f7;
+  --admin-line: #405570;
+  --ink: var(--admin-ink);
+  --muted: var(--admin-muted);
+  --line: var(--admin-line);
+  --sage: var(--admin-accent);
+  --gold: #c9acf9;
+  color-scheme: dark;
+}
+.premium-admin .admin-header { gap: 20px; flex-wrap: wrap; }
+.premium-admin .admin-nav { flex-wrap: wrap; gap: 16px; }
+.premium-admin .admin-nav .admin-theme-toggle { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 6px 0; background: transparent; border: 0; color: var(--admin-ink); font: 600 13px/1.4 "Segoe UI", Arial, sans-serif; cursor: pointer; white-space: nowrap; }
+.admin-theme-track { display: block; position: relative; width: 46px; height: 26px; border-radius: 20px; border: 1px solid #8295a9; background: #dce5ef; transition: background-color 180ms ease; }
+.admin-theme-thumb { position: absolute; display: grid; place-items: center; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; color: #215d91; background: #fff; transition: transform 180ms ease; }
+.admin-theme-toggle[aria-checked="true"] .admin-theme-track { background: #93c8f7; border-color: #93c8f7; }
+.admin-theme-toggle[aria-checked="true"] .admin-theme-thumb { transform: translateX(20px); color: #e7edf5; background: #1b2a3c; }
+.admin-layout .admin-identity { color: var(--admin-muted); }
+.premium-admin .inventory-search > div { min-width: 0; }
+.admin-layout[data-admin-theme="dark"] .premium-admin { background: var(--admin-background); }
+.admin-layout[data-admin-theme="dark"] :is(.admin-header, .console-panel, .console-kpis article, .inventory-item, .new-product-panel, .inventory-no-results, .admin-empty) { background: var(--admin-surface); color: var(--admin-ink); border-color: var(--admin-line); }
+.admin-layout[data-admin-theme="dark"] :is(.brand-mark, .brand-mark span, .admin-title h1, .admin-nav a, .admin-nav form button, .inventory-name b, .inventory-stock b, .console-form label, .product-form label, .admin-empty h2) { color: var(--admin-ink); }
+.admin-layout[data-admin-theme="dark"] :is(.console-form input, .console-form select, .product-form input, .product-form select, .product-form textarea, .inventory-search > div) { background: #132235; color: var(--admin-ink); border-color: #607b97; }
+.admin-layout[data-admin-theme="dark"] :is(input, textarea)::placeholder { color: #9badc2; opacity: 1; }
+.admin-layout[data-admin-theme="dark"] :is(.inventory-search label, .inventory-search input) { color: var(--admin-ink); }
+.admin-layout[data-admin-theme="dark"] :is(.inventory-search svg, .inventory-results, .inventory-name small, .inventory-unit-label, .console-form small) { color: var(--admin-muted); }
+.admin-layout[data-admin-theme="dark"] :is(.inventory-search > a, .panel-heading > a) { color: var(--admin-accent); }
+.admin-layout[data-admin-theme="dark"] :is(.inventory-search button, .save-button, .admin-button) { color: #102235; background: var(--admin-accent); border-color: var(--admin-accent); }
+.admin-layout[data-admin-theme="dark"] :is(.admin-button.secondary, .variant-editor > div:first-child button, .variant-row button) { color: var(--admin-accent); background: var(--admin-surface); border-color: #607b97; }
+.admin-layout[data-admin-theme="dark"] .admin-button.violet { background: #c9acf9; border-color: #c9acf9; color: #251640; }
+.admin-layout[data-admin-theme="dark"] :is(.order-contact-grid, .customer-avatar, .coupon-card.inactive, .inventory-thumbnail-empty) { background: var(--admin-soft); }
+.admin-layout[data-admin-theme="dark"] .coupon-card { border-color: #607b97; }
+.admin-layout[data-admin-theme="dark"] .admin-sections { background: #162436; }
+.admin-layout[data-admin-theme="dark"] .admin-sections a.active { background: #345575; color: #fff; }
+.admin-layout[data-admin-theme="dark"] .new-product-panel > summary { background: #24364b; color: var(--admin-ink); }
+.admin-layout[data-admin-theme="dark"] .console-status { background: #30445d; color: #d8e5f4; }
+.admin-layout[data-admin-theme="dark"] :is(.console-status.approved, .console-status.delivered, .inventory-stock.stock-good, .published, .form-message.success) { color: #a5e6bc; background: #163c2f; border-color: #367b57; }
+.admin-layout[data-admin-theme="dark"] :is(.console-status.pending, .console-status.preparing, .inventory-stock.stock-low) { color: #ffe0a0; background: #49391b; }
+.admin-layout[data-admin-theme="dark"] :is(.console-status.rejected, .console-status.cancelled, .inventory-stock.stock-empty, .form-message.error) { color: #ffd0d7; background: #4c2531; border-color: #a85168; }
+.admin-layout[data-admin-theme="dark"] .inventory-stock small { color: inherit; }
+.admin-layout[data-admin-theme="dark"] .unpublished { color: #ced9e7; background: #30445d; }
+.admin-layout[data-admin-theme="dark"] .inventory-good { border-left-color: #65bd87; }
+.admin-layout[data-admin-theme="dark"] .inventory-low { border-left-color: #edc36b; }
+.admin-layout[data-admin-theme="dark"] .inventory-empty { border-left-color: #ed879c; }
+.admin-layout[data-admin-theme="dark"] .status-dot.stock-good { background: #65bd87; }
+.admin-layout[data-admin-theme="dark"] .status-dot.stock-low { background: #edc36b; }
+.admin-layout[data-admin-theme="dark"] .status-dot.stock-empty { background: #ed879c; }
+.admin-layout[data-admin-theme="dark"] .count-pill { color: var(--admin-ink); background: var(--admin-soft); }
+.admin-layout[data-admin-theme="dark"] :is(a, button, input, select, textarea, summary):focus-visible { outline-color: #a7d6ff; }
+.admin-layout[data-admin-theme="dark"] .inventory-search > div:focus-within { outline-color: #a7d6ff; }
+.admin-layout .labels-page { color-scheme: light; }
+@media (prefers-reduced-motion: reduce) { .admin-theme-track, .admin-theme-thumb { transition: none; } }
 .premium-admin { background: #f2f5f8; min-height: 100vh; }
 .premium-admin .admin-header { background: white; border-bottom: 1px solid var(--admin-line); }
 .premium-admin .admin-workspace { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 32px; max-width: 1500px; padding: 32px 24px; }
