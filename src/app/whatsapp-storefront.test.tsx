@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-vi.mock("@/lib/storefront", () => ({ getStoreWhatsappNumber: async () => "5491112345678" }));
+vi.mock("@/lib/storefront", () => ({ getStoreWhatsappNumber: async () => "5491112345678", getCommerceSettings: async () => ({ freeShippingEnabled: true, freeShippingThreshold: 150000, freeShippingDestination: "home", cartWhatsappEnabled: false }) }));
 vi.mock("@/lib/env", () => ({ getSupabaseConfig: () => null }));
 vi.mock("@/lib/products", () => ({ getPublishedProducts: async () => [] }));
 vi.mock("@/components/storefront-header", () => ({ StorefrontHeader: () => null }));

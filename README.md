@@ -194,6 +194,16 @@ El inventario muestra miniaturas de 48 × 48 px y un indicador cuando el product
 
 Aplicá `supabase/migrations/20261012024218_protected_store_whatsapp.sql`. La contraseña se provisiona por separado como un hash bcrypt en `store_private.whatsapp_credentials`; no debe guardarse en archivos ni exponerse al cliente. La función `update_store_whatsapp` exige administrador autorizado y contraseña correcta. Los permisos de columna impiden saltear esa verificación actualizando el número directamente; editar el anuncio sigue permitido. `supabase/tests/protected_store_whatsapp.sql` verifica el flujo con credenciales ficticias y revierte todos los cambios al terminar.
 
+## Carrito, envío gratis y CRM
+
+En **Personalización → Carrito y envío gratis** podés activar el beneficio, cambiar el mínimo (inicialmente $100.000), elegir sucursal o domicilio y habilitar los pedidos por WhatsApp. La portada, el carrito y el checkout leen la misma configuración. El envío gratis se evalúa sobre el total de productos después de los descuentos; los pedidos guardan la regla y la elegibilidad vigentes al crearse. Los envíos fuera del beneficio se coordinan por separado: esta versión no agrega tarifas de transportista al pago.
+
+**Clientes y audiencia (CRM)** permite crear y editar fichas con nombre, email, teléfono, dirección, fecha de registro y grupo. Los pagos aprobados registran los clientes automáticamente; se importan los compradores de pedidos pagados existentes. El historial muestra productos, cantidades, importes y fechas, con una estimación de reposición cuando existen varias compras pagadas. Los pedidos vinculados conservan el historial aunque se corrija el correo de la ficha.
+
+Se incluyen Minorista y Mayorista/Detailer Profesional con 0% inicial. Podés crear otros grupos, asignar contactos y configurar un descuento porcentual por grupo. El comprador verifica su correo con Google desde el checkout para recibirlo automáticamente. La identidad se valida en el servidor y en Supabase; escribir el email de otro cliente no otorga su descuento. Los precios se calculan por unidad en centavos y se conservan tanto el precio de lista como el cobrado. La alternativa implementada para precios por grupo es el descuento porcentual.
+
+Aplicá `supabase/migrations/20261012042748_commerce_settings_customer_crm.sql`. El CRM y los grupos tienen RLS para administradores; el comprador sólo consulta su propio beneficio mediante una función acotada. `supabase/tests/commerce_settings_customer_crm.sql` prueba registro por pago, historial, configuración, autorización, aislamiento y rechazo de identidades falsas con datos ficticios y rollback. La verificación de Google reutiliza la callback existente y una cookie temporal, sin agregar URLs nuevas de OAuth.
+
 ## Adaptación de la vidriera a Toxic
 
 La portada, el catálogo, el pedido y el panel usan textos de cuidado vehicular. Los productos y precios demo son ilustrativos. La interfaz muestra las categorías Limpieza y protección y Accesorios; por compatibilidad conserva los valores históricos Decant y Frasco completo en la base de datos. No se modificaron productos existentes ni se requiere una migración para este cambio de textos.

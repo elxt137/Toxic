@@ -10,7 +10,8 @@ import { StorefrontHeader } from "@/components/storefront-header";
 import { getSupabaseConfig } from "@/lib/env";
 import { heroSlides, homeCategories, shortVideos, storeReviews } from "@/lib/home-content";
 import { getPublishedProducts } from "@/lib/products";
-import { getStoreWhatsappNumber } from "@/lib/storefront";
+import { getStoreWhatsappNumber, getCommerceSettings } from "@/lib/storefront";
+import { getCustomerBenefit } from "@/lib/customer-benefit";
 import type { ProductWithVariants } from "@/types/database";
 
 export default async function Home() {
@@ -23,6 +24,7 @@ export default async function Home() {
     catalogUnavailable = true;
   }
   const whatsappNumber = await getStoreWhatsappNumber();
+  const [settings,benefit] = await Promise.all([getCommerceSettings(),getCustomerBenefit().catch(() => null)]);
   const featured = products.filter((product) => product.is_featured);
   const available = products.filter((product) => product.variants.some((variant) => variant.stock > 0));
 
@@ -39,7 +41,7 @@ export default async function Home() {
       <WideBanner />
       <ProductCarousel title="Destacados" products={featured.length >= 3 ? featured : products} />
       <ShortsGallery shorts={shortVideos} />
-      <Catalog products={products} whatsappNumber={whatsappNumber} />
+      <Catalog products={products} whatsappNumber={whatsappNumber} settings={settings} benefit={benefit} />
       <HowToBuy />
       <StoreReviews reviews={storeReviews} />
       <SiteFooter whatsappNumber={whatsappNumber} />

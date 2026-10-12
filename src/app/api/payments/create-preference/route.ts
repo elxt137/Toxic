@@ -3,6 +3,9 @@ import { z } from "zod";
 
 import { getSiteUrl } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getCustomerBenefit } from "@/lib/customer-benefit";
+import { commerceSchema, discountedPrice } from "@/lib/crm";
+import { getFreeShippingProgress } from "@/lib/shipping";
 
 const requestSchema = z.object({
   items: z.array(z.object({
@@ -13,7 +16,7 @@ const requestSchema = z.object({
   customer: z.object({
     firstName: z.string().trim().min(2).max(80),
     lastName: z.string().trim().min(2).max(80),
-    email: z.string().trim().email().max(254),
+    email: z.string().trim().toLowerCase().email().max(254),
     phone: z.string().trim().min(6).max(30),
     street: z.string().trim().min(2).max(120),
     number: z.string().trim().min(1).max(20),
@@ -31,6 +34,12 @@ export async function POST(request: Request) {
   try {
     const body = requestSchema.parse(await request.json());
     const admin = createAdminClient();
+    const benefit = await getCustomerBenefit();
+    if (benefit && benefit.percent > 0 && benefit.email !== body.customer.email) throw new Error("Para usar tu descuento, el correo del pedido debe coincidir con tu sesión verificada.");
+    const { data: rules, error: rulesError } = await admin.from("storefront_settings").select("free_shipping_enabled,free_shipping_threshold,free_shipping_destination,cart_whatsapp_enabled").eq("id",true).single();
+    if (rulesError) throw new Error("No se pudo verificar la configuración de envío.");
+    const configuration = commerceSchema.parse(rules);
+    const percent = benefit?.percent ?? 0;
     const productIds = [...new Set(body.items.map((item) => item.productId))];
     const variantIds = [...new Set(body.items.map((item) => item.variantId))];
     const { data: products, error: productsError } = await admin
@@ -48,14 +57,19 @@ export async function POST(request: Request) {
       const product = productMap.get(item.productId);
       const variant = variantMap.get(item.variantId);
       if (!product || !variant || variant.product_id !== product.id || variant.stock < item.quantity) throw new Error(`Stock insuficiente para ${product?.name ?? "un producto"}.`);
-      return { product, variant, quantity: item.quantity };
+      return { product, variant, quantity: item.quantity, unitPrice: discountedPrice(Number(variant.price),percent) };
     });
-    const total = orderItems.reduce((sum, item) => sum + Number(item.variant.price) * item.quantity, 0);
+    const subtotal = orderItems.reduce((sum,item) => sum + Math.round(Number(item.variant.price)*100)*item.quantity,0)/100;
+    const total = orderItems.reduce((sum,item) => sum + Math.round(item.unitPrice*100)*item.quantity,0)/100;
+    const discount = Math.round((subtotal-total)*100)/100;
+    const shipping = getFreeShippingProgress(total,{ freeShippingEnabled: configuration.free_shipping_enabled, freeShippingThreshold: configuration.free_shipping_threshold, freeShippingDestination: configuration.free_shipping_destination, cartWhatsappEnabled: configuration.cart_whatsapp_enabled });
     const { customer } = body;
     const { data: order, error: orderError } = await admin
       .from("orders")
       .insert({
         total,
+        subtotal, discount_amount: discount, customer_group_name: benefit?.groupName ?? null, group_discount_percent: percent,
+        free_shipping_qualified: shipping.qualified, free_shipping_threshold: configuration.free_shipping_threshold, shipping_destination: configuration.free_shipping_destination,
         currency: "ARS",
         payer_name: `${customer.firstName} ${customer.lastName}`,
         payer_email: customer.email,
@@ -73,13 +87,13 @@ export async function POST(request: Request) {
       .single();
 
     if (orderError || !order) throw orderError ?? new Error("No se pudo crear el pedido.");
-    const { error: itemsError } = await admin.from("order_items").insert(orderItems.map(({ product, variant, quantity }) => ({
+    const { error: itemsError } = await admin.from("order_items").insert(orderItems.map(({ product, variant, quantity, unitPrice }) => ({
       order_id: order.id,
       product_id: product.id,
       variant_id: variant.id,
       variant_label: variant.label,
       product_name: `${product.brand} ${product.name} — ${variant.label}`,
-      unit_price: Number(variant.price),
+      list_unit_price: Number(variant.price), unit_price: unitPrice,
       quantity,
     })));
     if (itemsError) throw itemsError;
@@ -95,11 +109,11 @@ export async function POST(request: Request) {
           surname: customer.lastName,
           email: customer.email,
         },
-        items: orderItems.map(({ product, variant, quantity }) => ({
+        items: orderItems.map(({ product, variant, quantity, unitPrice }) => ({
           id: variant.id,
           title: `${product.brand} ${product.name} — ${variant.label}`,
           quantity,
-          unit_price: Number(variant.price),
+          unit_price: unitPrice,
           currency_id: "ARS",
           picture_url: product.image_url ?? undefined,
         })),

@@ -11,9 +11,12 @@ vi.mock("@/lib/auth", () => ({ requireAdmin: async () => ({ email: "admin@exampl
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({ from: (table: string) => {
   const data = table === "products" ? demoProducts : table === "product_variants" ? demoProducts.flatMap((p) => p.variants) : table === "storefront_settings" ? null : table === "orders" ? [{ id: "11111111-1111-4111-8111-111111111111", status: "approved", total: 6500, created_at: "2026-10-11T12:00:00Z", payer_name: "Cliente de prueba", payer_email: "buyer@example.invalid", shipping_status: "preparing", transaction_status: "processed" }] : table === "coupons" ? [{ id: "11111111-1111-4111-8111-111111111111", code: "RC2-TEST", kind: "percent", value: 15, active: true, usage_limit: 1, used_count: 0, expires_at: null }] : [];
   const builder: Record<string, unknown> = { then: (resolve: (value: unknown) => void) => resolve({ data, error: null }) };
+  if(table === "customer_groups") dataForCrm(builder,[{ id:"11111111-1111-4111-8111-111111111111",slug:"retail",name:"Minorista",discount_percent:0,created_at:"2026-01-01" },{ id:"22222222-2222-4222-8222-222222222222",slug:"professional",name:"Mayorista/Detailer Profesional",discount_percent:15,created_at:"2026-01-01" }]);
+  if(table === "customers") dataForCrm(builder,[{ id:"11111111-1111-4111-8111-111111111111",name:"Cliente de prueba",email:"buyer@example.invalid",phone:"123456",address:"Calle 123, CABA",group_id:"22222222-2222-4222-8222-222222222222",registered_at:"2026-01-01",updated_at:"2026-01-01",last_order_at:null }]);
   for (const key of ["select", "order", "eq", "in", "maybeSingle", "range"]) builder[key] = () => builder;
   return builder;
 } }) }));
+function dataForCrm(builder:Record<string,unknown>,data:unknown) { builder.then=(resolve:(value:unknown) => void) => resolve({ data,error:null }); }
 vi.mock("./actions", () => ({ createProduct: () => {}, updateProduct: () => {}, updateAnnouncement: () => {} }));
 vi.mock("./whatsapp-actions", () => ({ updateWhatsappNumber: async () => ({ success: true }) }));
 import AdminPage from "./page";
