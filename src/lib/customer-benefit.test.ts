@@ -25,4 +25,13 @@ describe("verified customer benefits", () => {
     rpc.mockResolvedValue({ data: null,error: { message: "private details" } });
     await expect(getCustomerBenefit()).rejects.toThrow("No se pudo verificar el beneficio");
   });
+  it("does not silently charge list price when session verification fails",async () => {
+    getUser.mockResolvedValue({ data:{ user:null },error:{ name:"AuthRetryableFetchError" } });
+    await expect(getCustomerBenefit()).rejects.toThrow("No se pudo verificar la sesión");
+    expect(rpc).not.toHaveBeenCalled();
+  });
+  it("allows guests whose browser has no authenticated session",async () => {
+    getUser.mockResolvedValue({ data:{ user:null },error:{ name:"AuthSessionMissingError" } });
+    expect(await getCustomerBenefit()).toBeNull();
+  });
 });
