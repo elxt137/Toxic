@@ -9,6 +9,18 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      customer_groups: {
+        Row: { id: string; slug: string; name: string; discount_percent: number; created_at: string };
+        Insert: { id?: string; slug: string; name: string; discount_percent?: number };
+        Update: { name?: string; discount_percent?: number };
+        Relationships: [];
+      };
+      customers: {
+        Row: { id: string; name: string; email: string; phone: string; address: string; group_id: string; registered_at: string; last_order_at: string | null; updated_at: string };
+        Insert: { id?: string; name: string; email: string; phone?: string; address?: string; group_id: string; registered_at?: string; last_order_at?: string | null };
+        Update: Partial<Database["public"]["Tables"]["customers"]["Insert"]>;
+        Relationships: [];
+      };
       product_admin_data: {
         Row: { product_id: string; cost_price: number | null; barcode: string | null; updated_at: string };
         Insert: { product_id: string; cost_price?: number | null; barcode?: string | null; updated_at?: string };
@@ -22,9 +34,9 @@ export type Database = {
         Relationships: [];
       };
       storefront_settings: {
-        Row: { id: boolean; announcement_text: string; whatsapp_number: string | null; updated_at: string };
-        Insert: { id?: boolean; announcement_text?: string; whatsapp_number?: string | null; updated_at?: string };
-        Update: { announcement_text?: string };
+        Row: { id: boolean; announcement_text: string; whatsapp_number: string | null; updated_at: string; free_shipping_enabled: boolean; free_shipping_threshold: number; free_shipping_destination: "branch" | "home"; cart_whatsapp_enabled: boolean };
+        Insert: { id?: boolean; announcement_text?: string; whatsapp_number?: string | null; updated_at?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
+        Update: { announcement_text?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
         Relationships: [];
       };
       admin_allowlist: {
@@ -118,6 +130,7 @@ export type Database = {
       };
       orders: {
         Row: {
+          customer_id: string | null; customer_group_name: string | null; group_discount_percent: number; free_shipping_qualified: boolean; free_shipping_threshold: number | null; shipping_destination: "branch" | "home" | null;
           shipping_status: "preparing" | "in_transit" | "delivered";
           transaction_status: "pending" | "processed" | "completed";
           tracking_number: string | null;
@@ -146,6 +159,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          customer_id?: string | null; customer_group_name?: string | null; group_discount_percent?: number; free_shipping_qualified?: boolean; free_shipping_threshold?: number | null; shipping_destination?: "branch" | "home" | null;
           shipping_status?: "preparing" | "in_transit" | "delivered";
           transaction_status?: "pending" | "processed" | "completed";
           tracking_number?: string | null;
@@ -178,6 +192,7 @@ export type Database = {
       };
       order_items: {
         Row: {
+          list_unit_price: number | null;
           id: string;
           order_id: string;
           product_id: string;
@@ -189,6 +204,7 @@ export type Database = {
           created_at: string;
         };
         Insert: {
+          list_unit_price?: number | null;
           id?: string;
           order_id: string;
           product_id: string;
@@ -205,6 +221,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      get_my_customer_benefit: { Args: Record<string, never>; Returns: Json };
       update_store_whatsapp: { Args: { p_number: string; p_password: string }; Returns: boolean };
       reserve_order_coupon: { Args: { p_order_id: string; p_code: string }; Returns: number };
       is_admin: { Args: never; Returns: boolean };

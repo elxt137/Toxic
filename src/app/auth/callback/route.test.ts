@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const exchangeCodeForSession = vi.fn();
+const { cookie,clearCookie }=vi.hoisted(() => ({ cookie:vi.fn(),clearCookie:vi.fn() }));
+vi.mock("next/headers",() => ({ cookies:async () => ({ get:cookie,delete:clearCookie }) }));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({ auth: { exchangeCodeForSession } }),
@@ -16,6 +18,7 @@ describe("Google auth callback", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     exchangeCodeForSession.mockReset();
+    cookie.mockReset();clearCookie.mockClear();
   });
 
   it("opens the admin panel on the public domain after a successful Google sign in", async () => {
@@ -26,6 +29,11 @@ describe("Google auth callback", () => {
 
     expect(exchangeCodeForSession).toHaveBeenCalledWith("abc");
     expect(response.headers.get("location")).toBe("https://tienda.example.com/admin");
+  });
+  it("returns a customer verification to checkout using the one-time cookie",async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL","");cookie.mockReturnValue({ value:"1" });exchangeCodeForSession.mockResolvedValue({ error:null });
+    expect((await GET(callback("?code=abc"))).headers.get("location")).toBe("https://tienda.example.com/checkout");
+    expect(clearCookie).toHaveBeenCalledWith("rc2_customer_checkout");
   });
 
   it("returns to login on the public domain when the code cannot be exchanged", async () => {

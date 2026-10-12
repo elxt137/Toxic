@@ -3,6 +3,19 @@ import "server-only";
 import { getSupabaseConfig } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import { getWhatsappNumber } from "@/lib/store-contact";
+import { defaultCommerceSettings, type CommerceSettings } from "@/lib/shipping";
+import { commerceSchema } from "@/lib/crm";
+
+export async function getCommerceSettings(): Promise<CommerceSettings> {
+  if (!getSupabaseConfig()) return defaultCommerceSettings;
+  try {
+    const client = await createClient();
+    const { data, error } = await client.from("storefront_settings").select("free_shipping_enabled,free_shipping_threshold,free_shipping_destination,cart_whatsapp_enabled").eq("id",true).maybeSingle();
+    const parsed = commerceSchema.safeParse(data);
+    if (error || !parsed.success) return { ...defaultCommerceSettings, freeShippingEnabled: false };
+    return { freeShippingEnabled: parsed.data.free_shipping_enabled, freeShippingThreshold: parsed.data.free_shipping_threshold, freeShippingDestination: parsed.data.free_shipping_destination, cartWhatsappEnabled: parsed.data.cart_whatsapp_enabled };
+  } catch { return { ...defaultCommerceSettings, freeShippingEnabled: false }; }
+}
 
 export async function getStoreWhatsappNumber() {
   const fallback = getWhatsappNumber();

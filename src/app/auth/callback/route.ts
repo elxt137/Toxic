@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { getSiteUrl } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -6,7 +7,10 @@ import { createClient } from "@/lib/supabase/server";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const requestedNext = url.searchParams.get("next") || "/admin";
+  const cookieStore=await cookies();
+  const customerFlow=cookieStore.get("rc2_customer_checkout")?.value === "1";
+  if (customerFlow) cookieStore.delete("rc2_customer_checkout");
+  const requestedNext = url.searchParams.get("next") || (customerFlow ? "/checkout" : "/admin");
   const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
     ? requestedNext
     : "/admin";
@@ -18,6 +22,6 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.redirect(
-    new URL("/login?error=callback", getSiteUrl(request.headers)),
+    new URL(customerFlow ? "/checkout?error=callback" : "/login?error=callback", getSiteUrl(request.headers)),
   );
 }
