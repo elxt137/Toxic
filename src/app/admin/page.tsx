@@ -1,4 +1,5 @@
-import { ExternalLink, Gauge, LogOut, Package, Palette, Plus, Truck, Users, Ticket } from "lucide-react";
+import { ExternalLink, Gauge, LogOut, Package, Palette, Plus, Truck, Users, Ticket, ChartNoAxesCombined } from "lucide-react";
+import { AnalyticsSettingsPanel } from "@/components/admin/analytics-settings";
 import Link from "next/link";
 import { ProductForm } from "@/components/product-form";
 import { AdminInventory } from "@/components/admin-inventory";
@@ -23,6 +24,7 @@ const sections = {
   clients: { label: "Clientes y audiencia (CRM)", icon: Users },
   marketing: { label: "Marketing y cupones", icon: Ticket },
   customization: { label: "Personalización", icon: Palette },
+  analytics: { label: "Google Analytics", icon: ChartNoAxesCombined },
 } as const;
 type Section = keyof typeof sections;
 type Params = { success?: string; section?: string; q?: string | string[]; order?: string };
@@ -58,7 +60,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         {section === "sales" && <OrdersPanel orders={orders} items={items} selectedOrder={params.order} />}
         {section === "clients" && <CrmPanel customers={customers} groups={groups.data ?? []} orders={orders} items={items} query={query} />}
         {section === "marketing" && <MarketingPanel coupons={coupons.data ?? []} />}
-        {section === "products" && <><details className="new-product-panel"><summary><Plus size={18} /> Agregar producto</summary><ProductForm action={createProduct} submitLabel="Crear producto" /></details><AdminInventory products={products} query={query} updateAction={updateProduct} privateData={metadata.data ?? []} /></>}
+        {section === "analytics" && <AnalyticsSettingsPanel settings={{ enabled: settings.data?.google_analytics_enabled ?? false, measurementId: settings.data?.google_analytics_id ?? null }} />}
+        {section === "products" && <><div className="inventory-toolbar"><Link className="admin-button" href="/admin/products/new"><Plus size={18} /> Agregar producto</Link><p>Usá Editar producto para abrir el editor completo, o desplegá una fila para cambios rápidos.</p></div><details className="new-product-panel"><summary>Alta rápida</summary><ProductForm action={createProduct} submitLabel="Crear producto" /></details><AdminInventory products={products} query={query} updateAction={updateProduct} privateData={metadata.data ?? []} /></>}
         {section === "customization" && <>
           <section className="console-panel"><h2>Mensaje de la barra superior</h2><p className="console-note">Actualizá la promoción que ven tus clientes al entrar a la tienda.</p><form className="console-form" action={updateAnnouncement}><label>Mensaje promocional<input name="announcement_text" defaultValue={settings.data?.announcement_text ?? defaultAnnouncement} required maxLength={240} /></label><button className="admin-button" type="submit">Guardar mensaje</button></form></section>
           <WhatsappSettings currentNumber={settings.data?.whatsapp_number ?? getWhatsappNumber()} />

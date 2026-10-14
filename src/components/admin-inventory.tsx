@@ -42,6 +42,7 @@ export function AdminInventory({ products, query = "", updateAction, privateData
             </span>
             <span className={`inventory-stock stock-${status.id}`}><b>{stock} <span className="inventory-unit-label">unidades</span></b><small>{status.label}</small></span>
             <span className={product.is_published ? "published" : "unpublished"}>{product.is_published ? "Publicado" : "Oculto"}</span>
+            <Link className="inventory-edit-label" href={`/admin/products/${product.id}`} aria-label={`Editar ${product.name}`}>Editar producto</Link>
           </summary>
           <ProductForm action={updateAction.bind(null, product.id)} product={product} submitLabel="Guardar cambios" />
           {privateData && <PrivateProductFields id={product.id} salePrice={product.variants.find((variant) => variant.is_active)?.price ?? product.price} metadata={privateData.find((entry) => entry.product_id === product.id)} />}

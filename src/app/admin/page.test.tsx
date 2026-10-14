@@ -25,6 +25,12 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("authorized inventory route", () => {
+  it("offers GA4 configuration with an enable switch", async () => {
+    render(await AdminPage({ searchParams: Promise.resolve({ section: "analytics" }) }));
+    expect(screen.getByRole("heading", { name: "Google Analytics 4" })).toBeTruthy();
+    expect(screen.getByLabelText("ID de medición")).toBeTruthy();
+    expect(screen.getByRole("checkbox", { name: "Activar Google Analytics" })).toBeTruthy();
+  });
   it("offers a password-protected WhatsApp form in customization", async () => {
     render(await AdminPage({ searchParams: Promise.resolve({ section: "customization" }) }));
     expect(screen.getByRole("heading", { name: "WhatsApp de la tienda" })).toBeTruthy();
