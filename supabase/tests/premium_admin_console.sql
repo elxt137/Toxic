@@ -5,7 +5,7 @@ select set_config('test.order_id', gen_random_uuid()::text, true);
 insert into public.admin_allowlist(email) values ('deployment-check@example.invalid');
 insert into public.orders(id, total) values (current_setting('test.order_id')::uuid, 100);
 set local role authenticated;
-set local request.jwt.claims = '{"role":"authenticated","email":"deployment-check@example.invalid"}';
+set local request.jwt.claims = '{"role":"authenticated","sub":"11111111-1111-4111-8111-111111111111","email":"deployment-check@example.invalid"}';
 insert into public.products(id,name,slug,brand,price) values
   (current_setting('test.product_id')::uuid,'Deployment check',current_setting('test.product_id'),'Test brand',100);
 insert into public.product_admin_data(product_id,cost_price,barcode) values
@@ -24,7 +24,7 @@ do $$ begin
     raise exception 'Admin unexpectedly changed payment approval';
   exception when insufficient_privilege then null; end;
 end $$;
-set local request.jwt.claims = '{"role":"authenticated","email":"outside-allowlist@example.invalid"}';
+set local request.jwt.claims = '{"role":"authenticated","sub":"22222222-2222-4222-8222-222222222222","email":"outside-allowlist@example.invalid"}';
 do $$ declare changed integer; begin
   if exists(select 1 from public.product_admin_data) or exists(select 1 from public.coupons) or exists(select 1 from public.orders) then raise exception 'Private data leaked outside allowlist'; end if;
   update public.product_admin_data set cost_price=0 where product_id=current_setting('test.product_id')::uuid;
@@ -49,7 +49,7 @@ do $$ begin
   exception when insufficient_privilege then null; end;
 end $$;
 set local role authenticated;
-set local request.jwt.claims = '{"role":"authenticated","email":"deployment-check@example.invalid"}';
+set local request.jwt.claims = '{"role":"authenticated","sub":"11111111-1111-4111-8111-111111111111","email":"deployment-check@example.invalid"}';
 delete from public.products where id=current_setting('test.product_id')::uuid;
 do $$ begin
   if exists(select 1 from public.product_admin_data where product_id=current_setting('test.product_id')::uuid) then raise exception 'Private metadata cascade failed'; end if;
