@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getCustomerBenefit } from "@/lib/customer-benefit";
 import { commerceSchema, discountedPrice } from "@/lib/crm";
 import { getFreeShippingProgress } from "@/lib/shipping";
+import { checkoutRateKey } from "@/lib/payment-security";
 
 const requestSchema = z.object({
   items: z.array(z.object({
@@ -29,11 +30,14 @@ const requestSchema = z.object({
 
 export async function POST(request: Request) {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
-  if (!accessToken) return NextResponse.json({ error: "Mercado Pago no está configurado." }, { status: 503 });
+  if (!accessToken || !process.env.MERCADOPAGO_WEBHOOK_SECRET) return NextResponse.json({ error: "Mercado Pago no está configurado." }, { status: 503 });
 
   try {
     const body = requestSchema.parse(await request.json());
     const admin = createAdminClient();
+    const { data: allowed, error: limitError } = await admin.rpc("consume_checkout_attempt", { p_key: checkoutRateKey(request.headers) });
+    if (limitError || allowed === null) return NextResponse.json({ error: "No se pudo verificar el límite de solicitudes. Volvé a intentar." }, { status: 503 });
+    if (!allowed) return NextResponse.json({ error: "Demasiados intentos. Esperá unos minutos antes de volver a intentar." }, { status: 429, headers: { "Retry-After": "300" } });
     const benefit = await getCustomerBenefit();
     if (benefit && benefit.percent > 0 && benefit.email !== body.customer.email) throw new Error("Para usar tu descuento, el correo del pedido debe coincidir con tu sesión verificada.");
     const { data: rules, error: rulesError } = await admin.from("storefront_settings").select("free_shipping_enabled,free_shipping_threshold,free_shipping_destination,cart_whatsapp_enabled").eq("id",true).single();

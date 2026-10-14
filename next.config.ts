@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { securityHeaders } from "./src/lib/security-headers";
 
 // Hostinger reemplaza los archivos mientras algunos navegadores todavía tienen
 // rutas y assets del build anterior en memoria. Un identificador por build hace
@@ -7,6 +8,8 @@ const deploymentId =
   process.env.NEXT_DEPLOYMENT_ID ?? new Date().toISOString().replace(/[^A-Za-z0-9_-]/g, "_");
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  async headers() { return [{ source: "/:path*", headers: securityHeaders(process.env.NODE_ENV === "production") }]; },
   deploymentId,
   experimental: {
     // El entorno de despliegue tiene memoria limitada durante el prerender.

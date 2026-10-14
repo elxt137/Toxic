@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-const { benefit, writes } = vi.hoisted(() => ({ benefit: vi.fn(), writes: vi.fn() }));
+const { benefit, writes, rate } = vi.hoisted(() => ({ benefit: vi.fn(), writes: vi.fn(), rate: vi.fn() }));
 vi.mock("@/lib/customer-benefit", () => ({ getCustomerBenefit: benefit }));
 
 const productId = "11111111-1111-4111-8111-111111111111";
@@ -23,7 +23,7 @@ function query(table: string) {
   return builder;
 }
 
-vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: () => ({ from: query }) }));
+vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: () => ({ from: query, rpc:rate }) }));
 
 import { POST } from "@/app/api/payments/create-preference/route";
 
@@ -41,8 +41,10 @@ describe("Mercado Pago preference", () => {
 
   beforeEach(() => {
     benefit.mockReset().mockResolvedValue(null); writes.mockClear();
+    rate.mockReset().mockResolvedValue({ data:true,error:null });
     tableData.storefront_settings={ free_shipping_enabled:true,free_shipping_threshold:100000,free_shipping_destination:"branch",cart_whatsapp_enabled:true };
     vi.stubEnv("MERCADOPAGO_ACCESS_TOKEN", "test-token");
+    vi.stubEnv("MERCADOPAGO_WEBHOOK_SECRET", "test-secret");
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     fetchMock.mockResolvedValue(new Response(JSON.stringify({ id: "pref-1", init_point: "https://mp.example/checkout" }), { status: 201 }));
     vi.stubGlobal("fetch", fetchMock);
@@ -62,6 +64,19 @@ describe("Mercado Pago preference", () => {
     expect(preference.back_urls.success).toBe("https://tienda.example.com/pago/resultado?status=success");
     expect(preference.back_urls.failure).toBe("https://tienda.example.com/pago/resultado?status=failure");
     expect(preference.notification_url).toBe("https://tienda.example.com/api/payments/webhook");
+  });
+  it("rejects excessive checkout attempts before creating orders or provider requests", async () => {
+    rate.mockResolvedValue({ data:false,error:null });
+    const response=await POST(checkoutRequest());expect(response.status).toBe(429);expect(response.headers.get("retry-after")).toBe("300");
+    expect(writes).not.toHaveBeenCalled();expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it("keeps checkout disabled until signed webhook verification is configured", async () => {
+    vi.stubEnv("MERCADOPAGO_WEBHOOK_SECRET", "");
+    expect((await POST(checkoutRequest())).status).toBe(503); expect(writes).not.toHaveBeenCalled(); expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it("fails closed when the shared request limiter cannot be checked", async () => {
+    rate.mockResolvedValue({ data:null,error:{ message:"database details" } });
+    const response=await POST(checkoutRequest());expect(response.status).toBe(503);expect(writes).not.toHaveBeenCalled();expect(fetchMock).not.toHaveBeenCalled();
   });
   it("applies the verified customer's group discount to the payment and persisted item prices", async () => {
     benefit.mockResolvedValue({ email: "ana@example.com", groupId: productId, groupName: "Profesional", percent: 15 });

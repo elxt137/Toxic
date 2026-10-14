@@ -13,10 +13,10 @@ async function main() {
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
+      page.on('console', (message) => { if (message.type() === 'error' && /content.security.policy|violates.*directive/i.test(message.text())) errors.push(message.text()); });
       await page.goto(baseURL);
       await page.getByRole('link', { name: 'RC2 · Estética Vehicular, inicio' }).waitFor();
-      const cookie = page.getByRole('button', { name: /Aceptar/ });
-      if (await cookie.isVisible()) await cookie.click();
+      await page.getByRole('button', { name: 'Sólo necesarias', exact: true }).click();
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `Home overflows at ${width}px`);
       if (width <= 1000) {
         await page.getByRole('button', { name: 'Abrir menú' }).click();
@@ -82,7 +82,7 @@ async function main() {
     await page.waitForURL('**/productos?q=microfibra');
     await page.getByRole('heading', { name: /Paño de microfibra/ }).waitFor();
     await page.goto(baseURL);
-    const cookie = page.getByRole('button', { name: /Aceptar/ });
+    const cookie = page.getByRole('button', { name: 'Sólo necesarias', exact: true });
     if (await cookie.isVisible()) await cookie.click();
     for (const [label, id] of [['Quiénes somos', 'nosotros'], ['Envíos', 'envios'], ['Cambios y devoluciones', 'cambios'], ['Medios de pago', 'pagos']]) {
       await page.getByRole('link', { name: label, exact: true }).click();

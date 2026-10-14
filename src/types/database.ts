@@ -224,6 +224,8 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      consume_checkout_attempt: { Args: { p_key: string }; Returns: boolean };
+      confirm_verified_order_payment: { Args: { p_order_id: string; p_payment_id: string; p_status: string; p_amount: number; p_currency: string; p_preference_id: string }; Returns: boolean };
       save_catalog_product: { Args: { p_id: string | null; p_product: Json; p_variants: Json }; Returns: string };
       get_my_customer_benefit: { Args: Record<string, never>; Returns: Json };
       update_store_whatsapp: { Args: { p_number: string; p_password: string }; Returns: boolean };
