@@ -34,9 +34,10 @@ export type Database = {
         Relationships: [];
       };
       storefront_settings: {
-        Row: { id: boolean; announcement_text: string; whatsapp_number: string | null; updated_at: string; free_shipping_enabled: boolean; free_shipping_threshold: number; free_shipping_destination: "branch" | "home"; cart_whatsapp_enabled: boolean };
-        Insert: { id?: boolean; announcement_text?: string; whatsapp_number?: string | null; updated_at?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
-        Update: { announcement_text?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
+        // Optional during rollout; absent fields keep analytics disabled.
+        Row: { google_analytics_enabled?: boolean; google_analytics_id?: string | null; id: boolean; announcement_text: string; whatsapp_number: string | null; updated_at: string; free_shipping_enabled: boolean; free_shipping_threshold: number; free_shipping_destination: "branch" | "home"; cart_whatsapp_enabled: boolean };
+        Insert: { google_analytics_enabled?: boolean; google_analytics_id?: string | null; id?: boolean; announcement_text?: string; whatsapp_number?: string | null; updated_at?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
+        Update: { google_analytics_enabled?: boolean; google_analytics_id?: string | null; announcement_text?: string; free_shipping_enabled?: boolean; free_shipping_threshold?: number; free_shipping_destination?: "branch" | "home"; cart_whatsapp_enabled?: boolean };
         Relationships: [];
       };
       admin_allowlist: {
@@ -70,6 +71,7 @@ export type Database = {
           currency: string;
           stock: number;
           image_url: string | null;
+          image_urls?: string[];
           concentration: string | null;
           size_ml: number | null;
           is_published: boolean;
@@ -89,6 +91,7 @@ export type Database = {
           currency?: string;
           stock?: number;
           image_url?: string | null;
+          image_urls?: string[];
           concentration?: string | null;
           size_ml?: number | null;
           is_published?: boolean;
@@ -221,6 +224,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      save_catalog_product: { Args: { p_id: string | null; p_product: Json; p_variants: Json }; Returns: string };
       get_my_customer_benefit: { Args: Record<string, never>; Returns: Json };
       update_store_whatsapp: { Args: { p_number: string; p_password: string }; Returns: boolean };
       reserve_order_coupon: { Args: { p_order_id: string; p_code: string }; Returns: number };

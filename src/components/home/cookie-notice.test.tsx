@@ -6,6 +6,11 @@ import { CookieNotice } from "@/components/home/cookie-notice";
 afterEach(() => { cleanup(); window.localStorage.clear(); });
 
 describe("CookieNotice", () => {
+  it("allows refusing analytics without blocking the store", async () => {
+    render(<CookieNotice />); fireEvent.click(await screen.findByRole("button", { name: "Sólo necesarias" }));
+    expect(localStorage.getItem("rc2-analytics-consent")).toBe("rejected");
+    expect(screen.queryByRole("region", { name: "Aviso de cookies" })).toBeNull();
+  });
   it("is shown until the visitor accepts it and stays hidden afterwards", async () => {
     render(<CookieNotice />);
     fireEvent.click(await screen.findByRole("button", { name: "Acepto" }));

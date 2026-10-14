@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getPublishedProduct } from "@/lib/products";
 import { ProductDetailActions } from "@/components/product-detail-actions";
 import { StorefrontHeader } from "@/components/storefront-header";
+import { ProductGallery } from "@/components/product-gallery";
 
 type ProductPageProps = { params: Promise<{ slug: string }> };
 
@@ -20,12 +21,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="shell">
         <Link className="product-detail-back" href="/#catalogo"><ArrowLeft size={16} /> Volver al catálogo</Link>
         <div className="product-detail">
-          <div className="product-detail-visual">
-            {product.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.image_url} alt={`Producto: ${product.name}`} />
-            ) : <div className="card-bottle" aria-hidden="true"><i /></div>}
-          </div>
+          <ProductGallery name={product.name} images={product.image_urls?.length ? product.image_urls : product.image_url ? [product.image_url] : []} />
           <div className="product-detail-copy">
             <p className="product-brand">{product.brand}</p>
             <h1>{product.name}</h1>

@@ -15,7 +15,8 @@ const nextConfig: NextConfig = {
     // Hostinger termina TLS y reenvía las Server Actions. Limitamos la
     // excepción de origen al host público que sirve la vidriera.
     serverActions: {
-      allowedOrigins: ["goldenrod-cassowary-586867.hostingersite.com"],
+      allowedOrigins: ["rc2.com.ar", "www.rc2.com.ar", "goldenrod-cassowary-586867.hostingersite.com"],
+      bodySizeLimit: "6mb",
     },
   },
 };

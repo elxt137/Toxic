@@ -12,22 +12,24 @@ export function CookieNotice() {
 
   useEffect(() => {
     let accepted = false;
-    try { accepted = window.localStorage.getItem(storageKey) === "accepted"; } catch { /* almacenamiento bloqueado */ }
+    try { accepted = window.localStorage.getItem("rc2-analytics-consent") !== null; } catch { /* almacenamiento bloqueado */ }
     if (accepted) return;
     const timeoutId = window.setTimeout(() => setVisible(true), 0);
     return () => window.clearTimeout(timeoutId);
   }, []);
 
-  function accept() {
-    try { window.localStorage.setItem(storageKey, "accepted"); } catch { /* almacenamiento bloqueado */ }
+  function accept(analytics: boolean) {
+    try { window.localStorage.setItem(storageKey, "accepted"); window.localStorage.setItem("rc2-analytics-consent", analytics ? "accepted" : "rejected"); } catch { /* almacenamiento bloqueado */ }
+    window.dispatchEvent(new Event("rc2-analytics-consent"));
     setVisible(false);
   }
 
   if (!visible) return null;
   return (
     <section className={styles.cookie} role="region" aria-label="Aviso de cookies">
-      <p>Usamos cookies para recordar tu carrito y mejorar tu experiencia en la tienda.</p>
-      <button type="button" onClick={accept}><Check size={15} aria-hidden="true" /> Acepto</button>
+      <p>Recordamos tu carrito. Con tu permiso, usamos Google Analytics para medir visitas y mejorar la tienda.</p>
+      <button type="button" onClick={() => accept(false)}>Sólo necesarias</button>
+      <button type="button" onClick={() => accept(true)}><Check size={15} aria-hidden="true" /> Acepto</button>
     </section>
   );
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Quicksand } from "next/font/google";
 import { AnnouncementBar } from "@/components/announcement-bar";
-import { getAnnouncementText } from "@/lib/storefront";
+import { getAnnouncementText, getAnalyticsSettings } from "@/lib/storefront";
+import { GoogleAnalytics } from "@/components/google-analytics";
+import { StoreConsent } from "@/components/store-consent";
 import "./globals.css";
 
 const bodyFont = Quicksand({ subsets: ["latin"], variable: "--font-body" });
@@ -13,11 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const announcement = await getAnnouncementText();
+  const [announcement, analytics] = await Promise.all([getAnnouncementText(), getAnalyticsSettings()]);
 
   return (
     <html lang="es" className={`h-full antialiased ${bodyFont.variable} ${displayFont.variable}`}>
-      <body className="min-h-full flex flex-col"><AnnouncementBar text={announcement} />{children}</body>
+      <body className="min-h-full flex flex-col"><AnnouncementBar text={announcement} />{children}<StoreConsent /><GoogleAnalytics settings={analytics} /></body>
     </html>
   );
 }
