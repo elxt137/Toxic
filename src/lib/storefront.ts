@@ -5,6 +5,19 @@ import { createClient } from "@/lib/supabase/server";
 import { getWhatsappNumber } from "@/lib/store-contact";
 import { defaultCommerceSettings, type CommerceSettings } from "@/lib/shipping";
 import { commerceSchema } from "@/lib/crm";
+import { analyticsSchema, type AnalyticsSettings } from "@/lib/analytics";
+
+export async function getAnalyticsSettings(): Promise<AnalyticsSettings> {
+  const disabled = { enabled: false, measurementId: null };
+  if (!getSupabaseConfig()) return disabled;
+  try {
+    const client = await createClient();
+    const { data, error } = await client.from("storefront_settings").select("google_analytics_id,google_analytics_enabled").eq("id", true).maybeSingle();
+    if (error || !data) return disabled;
+    const parsed = analyticsSchema.safeParse({ enabled: data.google_analytics_enabled, measurementId: data.google_analytics_id });
+    return parsed.success ? parsed.data : disabled;
+  } catch { return disabled; }
+}
 
 export async function getCommerceSettings(): Promise<CommerceSettings> {
   if (!getSupabaseConfig()) return defaultCommerceSettings;

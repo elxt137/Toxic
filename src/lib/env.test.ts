@@ -26,6 +26,10 @@ describe("getSupabaseConfig", () => {
 });
 
 describe("getSiteUrl", () => {
+  it.each(["rc2.com.ar", "www.rc2.com.ar"])("keeps OAuth on %s despite an obsolete build URL", (host) => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://goldenrod-cassowary-586867.hostingersite.com");
+    expect(getSiteUrl(new Headers({ host }))).toBe(`https://${host}`);
+  });
   afterEach(() => {
     vi.unstubAllEnvs();
   });

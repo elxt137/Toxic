@@ -1,0 +1,12 @@
+project_id = "rc2"
+
+# Only declare the Auth URL fields owned by this repository. Provider credentials
+# and unrelated remote settings are intentionally managed in the dashboard.
+[auth]
+site_url = "https://www.rc2.com.ar"
+additional_redirect_urls = [
+  "https://www.rc2.com.ar/auth/callback",
+  "https://rc2.com.ar/auth/callback",
+  "https://goldenrod-cassowary-586867.hostingersite.com/auth/callback",
+  "http://localhost:3000/auth/callback",
+]

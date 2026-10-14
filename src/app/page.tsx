@@ -1,5 +1,4 @@
 import { Catalog } from "@/components/catalog";
-import { CookieNotice } from "@/components/home/cookie-notice";
 import { FloatingActions } from "@/components/home/floating-actions";
 import { HeroCarousel } from "@/components/home/hero-carousel";
 import { CategoryCircles, HowToBuy, PromoBanners, SideRail, SiteFooter, WideBanner } from "@/components/home/home-sections";
@@ -46,7 +45,6 @@ export default async function Home() {
       <StoreReviews reviews={storeReviews} />
       <SiteFooter whatsappNumber={whatsappNumber} />
       <FloatingActions whatsappNumber={whatsappNumber} />
-      <CookieNotice />
     </main>
   );
 }

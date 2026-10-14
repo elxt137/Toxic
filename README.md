@@ -21,11 +21,11 @@ La base funcional está lista. Sin credenciales de Supabase, la portada muestra 
 ## Conexión de producción de RC2
 
 - Supabase: **Toxic**, ref `qtoibmsiqsgvnervnzjy`, URL `https://qtoibmsiqsgvnervnzjy.supabase.co`.
-- Sitio: `https://goldenrod-cassowary-586867.hostingersite.com`, desplegado desde `main` de `elxt137/Toxic`.
+- Sitio: `https://www.rc2.com.ar` (también acepta `https://rc2.com.ar`), desplegado desde `main` de `elxt137/Toxic`.
 - Antes de cualquier operación de Supabase, comprobar el ref de destino. El proyecto de perfumes no pertenece a RC2 y no debe usarse ni modificarse.
 - Las diez migraciones existentes se aplicaron el 11/10/2026 mediante `supabase db push`; sus versiones coinciden entre local y remoto. No se ejecutaron imports del catálogo anterior. Las seis tablas de la app tienen RLS activo, existe el bucket público `product-images` y el catálogo comienza vacío.
 - Google está habilitado con el cliente OAuth de RC2. El proveedor usa `https://qtoibmsiqsgvnervnzjy.supabase.co/auth/v1/callback` como URI autorizada en Google Cloud.
-- Auth Site URL: `https://goldenrod-cassowary-586867.hostingersite.com`. Redirect URLs: `https://goldenrod-cassowary-586867.hostingersite.com/auth/callback` y `http://localhost:3000/auth/callback`.
+- Auth Site URL: `https://www.rc2.com.ar`. Redirect URLs: `https://www.rc2.com.ar/auth/callback`, `https://rc2.com.ar/auth/callback`, la callback del dominio temporal y `http://localhost:3000/auth/callback`. Configuración corregida y verificada el 13/10/2026. `supabase/config.toml` declara sólo estas URLs; no incluye credenciales ni reemplaza otros ajustes de Auth.
 - Los cuatro correos autorizados por el propietario están activos en `public.admin_allowlist`; Google verifica identidad y la lista concede permisos.
 
 En Hostinger, usar la URL y la clave **publishable del mismo proyecto Toxic**, junto con `NEXT_PUBLIC_SITE_URL` del sitio y `NEXT_PUBLIC_WHATSAPP_NUMBER=5492984252129`. Guardar `SUPABASE_SERVICE_ROLE_KEY` y `MERCADOPAGO_ACCESS_TOKEN` únicamente en el servidor, sin prefijo `NEXT_PUBLIC_`, si se habilita el checkout. Toda actualización de `NEXT_PUBLIC_*` requiere una compilación nueva. Las claves, tokens y credenciales Google no se guardan en Git ni en esta documentación.
@@ -87,7 +87,19 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=5492984252129
 6. Ejecutá las migraciones nuevas de pedidos con `npx supabase db push` y configurá Mercado Pago con credenciales de prueba desde **Tus integraciones → Credenciales de prueba**. El webhook usa `/api/payments/webhook`; en producción `NEXT_PUBLIC_SITE_URL` debe ser una URL HTTPS pública.
 7. Ejecutá `npm run dev`. La vidriera queda en `/`, el catálogo completo en `/productos`, el login en `/login` y el panel en `/admin`.
 
-## Seguridad
+## Panel de RC2: productos, fotos y Analytics
+
+En **Productos e inventario**, **Agregar producto** abre `/admin/products/new`. Cada fila tiene **Editar producto**, que abre `/admin/products/[id]`, y una edición rápida al desplegarla. Se administran nombre, marca, descripción, categoría, presentaciones, precios, stock, publicación, destacados, orden y especificación. El editor conserva los datos si falla el guardado. Desmarcar **Publicado** oculta el producto sin borrar el historial de pedidos. Costos y códigos de barras se administran en la misma pantalla, en un formulario independiente.
+
+La galería admite seis fotos JPG, PNG o WebP de hasta 5 MB cada una. Se pueden subir archivos desde el celular o la computadora, agregar URLs, quitar fotos de la galería y elegir la portada. Los archivos se validan por tamaño, tipo y firma y se almacenan con nombres únicos en `product-images`, usando la sesión del administrador y RLS. Al guardar se actualiza la galería pública y la portada. Quitar una foto del producto no borra su archivo del almacenamiento; los archivos subidos antes de cancelar una edición también permanecen allí.
+
+Producto y presentaciones se guardan en una transacción mediante `save_catalog_product`, con `SECURITY INVOKER`. Se rechazan presentaciones de otro producto y se desactivan las retiradas para conservar las referencias de pedidos. Las presentaciones admiten hasta 9.999 ml con un decimal. La migración nueva es `20261014020329_admin_product_gallery_analytics.sql`; aplicarla antes de publicar esta versión. La prueba `supabase/tests/admin_product_gallery_analytics.sql` verifica CRUD, rechazo fuera de whitelist, aislamiento de borradores, galería, integridad de presentaciones, rollback y Analytics con datos ficticios dentro de una transacción que termina en `ROLLBACK`.
+
+En **Google Analytics**, ingresar el ID GA4 `G-XXXXXXXXXX`, marcar **Activar Google Analytics** y guardar. No se admite pegar código JavaScript. Analytics queda apagado inicialmente y sólo carga después de aceptar las cookies de medición. **Sólo necesarias** permite seguir comprando sin Analytics. La medición registra vistas de páginas, excluye panel, login, callback, checkout y endpoints internos, y omite parámetros de búsqueda en los eventos enviados. Los informes se consultan en Google Analytics; no se simulan estadísticas ni se incorporan credenciales privadas de Google al panel. Para verificar el flujo, aceptar cookies en la tienda y revisar el informe en tiempo real con el ID propio configurado.
+
+Publicación: abrir PR de la rama de tarea hacia `develop`, validar e integrar allí, aplicar la migración en el proyecto **Toxic** `qtoibmsiqsgvnervnzjy` y recién entonces promocionar a `main`. Hostinger compila `main` automáticamente. Configurar `NEXT_PUBLIC_SITE_URL=https://www.rc2.com.ar` y reconstruir; el login también conserva el origen `rc2.com.ar` o `www.rc2.com.ar` si el build todavía declara el dominio antiguo. El acceso real con Google debe verificarse desde el mismo dominio en el que se inició el flujo para conservar la cookie PKCE.
+
+## Seguridad del panel
 
 Google verifica identidad; no concede permisos. `requireAdmin()` consulta `admin_allowlist` antes de mostrar el panel o mutar datos, y las políticas RLS vuelven a validar la whitelist en Postgres. Ocultar una ruta o un botón no se considera autorización.
 

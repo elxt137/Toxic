@@ -50,6 +50,12 @@ describe("admin appearance in a real browser", () => {
       await page.screenshot({ path: resolve(`.npm-cache/admin-theme-qa/${section}-${theme}-${width}.png`), fullPage: true });
       const overflow = await page.evaluate(() => Array.from(document.querySelectorAll("body *")).filter((element) => { const box = element.getBoundingClientRect(); return box.right > innerWidth + 1 && box.width > 0; }).map((element) => `${element.tagName}.${element.getAttribute("class")}: ${Math.round(element.getBoundingClientRect().right)} (${getComputedStyle(element).boxSizing})`).slice(-10));
       expect(await page.evaluate(() => document.documentElement.scrollWidth), `Overflow at ${width}: ${overflow.join(", ")}`).toBeLessThanOrEqual(width);
+      if (section === "products") {
+        const badge = await page.locator(".published").first().boundingBox();
+        expect(badge?.width).toBeGreaterThanOrEqual(60);
+        const edit = await page.locator(".inventory-edit-label").first().boundingBox();
+        expect(edit?.width).toBeGreaterThanOrEqual(80);
+      }
     }
     const ratios = await page.locator(".product-form input:not([type=hidden]):not([type=checkbox]), .inventory-name b, .inventory-stock, .admin-title h1, .console-form input:not([type=hidden]), .console-form select, .console-panel h2, .console-note, .console-kpis strong, .console-status, .coupon-card code, .console-customer b").evaluateAll((elements) => {
       function rgb(value: string) { return (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number); }

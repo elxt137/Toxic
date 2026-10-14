@@ -15,6 +15,12 @@ const callback = (query: string) => new Request(`http://127.0.0.1:3000/auth/call
 });
 
 describe("Google auth callback", () => {
+  it("keeps the PKCE callback and admin destination on the RC2 domain despite a stale build", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://goldenrod-cassowary-586867.hostingersite.com");
+    exchangeCodeForSession.mockResolvedValue({ error: null });
+    const response = await GET(new Request("https://www.rc2.com.ar/auth/callback?code=test", { headers: { host: "www.rc2.com.ar" } }));
+    expect(response.headers.get("location")).toBe("https://www.rc2.com.ar/admin");
+  });
   afterEach(() => {
     vi.unstubAllEnvs();
     exchangeCodeForSession.mockReset();

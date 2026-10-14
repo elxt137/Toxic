@@ -296,3 +296,8 @@ button { cursor: pointer; }
   .notta-page .product-prices span { max-width: 100%; white-space: normal; font-size: 12px; line-height: 1.4; }
   .notta-page .product-info h3 { overflow-wrap: anywhere; }
 }
+.product-gallery { min-width: 0; }
+.product-gallery-thumbnails { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.product-gallery-thumbnails button { padding: 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; }
+.product-gallery-thumbnails button[aria-pressed="true"] { border: 2px solid #ac681a; }
+.product-gallery-thumbnails img { width: 64px; height: 64px; object-fit: contain; }

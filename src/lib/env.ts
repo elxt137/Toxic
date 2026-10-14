@@ -20,6 +20,9 @@ function getRequestOrigin(requestHeaders?: Headers) {
 }
 
 export function getSiteUrl(requestHeaders?: Headers) {
+  const requestOrigin = getRequestOrigin(requestHeaders);
+  // Preserve the browser's origin so the PKCE cookie survives the domain migration.
+  if (requestOrigin === "https://rc2.com.ar" || requestOrigin === "https://www.rc2.com.ar") return requestOrigin;
   const configured = process.env.NEXT_PUBLIC_SITE_URL;
   if (configured) return configured.replace(/\/$/, "");
   return getRequestOrigin(requestHeaders) ?? "http://localhost:3000";
