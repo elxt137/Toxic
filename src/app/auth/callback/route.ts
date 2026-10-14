@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const customerFlow=cookieStore.get("rc2_customer_checkout")?.value === "1";
   if (customerFlow) cookieStore.delete("rc2_customer_checkout");
   const requestedNext = url.searchParams.get("next") || (customerFlow ? "/checkout" : "/admin");
-  const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//")
+  const next = requestedNext.startsWith("/") && !requestedNext.startsWith("//") && !/[\\\u0000-\u0020\u007f]|%5c|%2f|%0[0-9a-f]|%1[0-9a-f]/i.test(requestedNext)
     ? requestedNext
     : "/admin";
 

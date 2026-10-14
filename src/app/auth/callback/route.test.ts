@@ -15,6 +15,16 @@ const callback = (query: string) => new Request(`http://127.0.0.1:3000/auth/call
 });
 
 describe("Google auth callback", () => {
+  it.each(["/\\evil.example", "/\t/evil.example", "//evil.example", "https://evil.example", "/admin\\evil", "/%5cevil.example"])("rejects an unsafe return destination %s", async (next) => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", ""); exchangeCodeForSession.mockResolvedValue({ error: null });
+    const response = await GET(callback(`?code=abc&next=${encodeURIComponent(next)}`));
+    expect(response.headers.get("location")).toBe("https://tienda.example.com/admin");
+  });
+  it("preserves a safe local return destination and query", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", ""); exchangeCodeForSession.mockResolvedValue({ error: null });
+    const response = await GET(callback("?code=abc&next=" + encodeURIComponent("/admin?section=products")));
+    expect(response.headers.get("location")).toBe("https://tienda.example.com/admin?section=products");
+  });
   it("keeps the PKCE callback and admin destination on the RC2 domain despite a stale build", async () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://goldenrod-cassowary-586867.hostingersite.com");
     exchangeCodeForSession.mockResolvedValue({ error: null });

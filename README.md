@@ -34,7 +34,23 @@ Después de desplegar, verificar el proyecto incrustado en los JS, las respuesta
 
 La revisión inicial reportó dos WARN de seguridad por `public.is_admin()` como función `SECURITY DEFINER` ejecutable por `anon` y `authenticated`; revisar el diseño sin desactivar RLS. Rendimiento reportó sólo INFO: una FK sin índice en `order_items.product_id` e índices aún sin uso en una base vacía.
 
-## Stack
+## Correcciones de seguridad — 14/10/2026
+
+Next.js y `eslint-config-next` se actualizan a 16.3.8. El lockfile utiliza sharp 0.35.5 y source-map-js 1.2.2. El escaneo `npm audit --omit=dev` no reporta vulnerabilidades. El escaneo completo mantiene cinco avisos de una sola cadena de ESLint que depende de braces 3.0.3, cuyo aviso GHSA-vfj7-8cjw-p6xm no declara un parche. No se aplica el downgrade incompatible sugerido por `npm audit fix --force`; esa dependencia se usa en el lint, no recibe entradas de visitantes.
+
+El callback OAuth rechaza destinos externos, barras invertidas y caracteres de control, incluidas sus formas codificadas. La tienda entrega protección contra iframes, MIME sniffing, referencias y acceso a cámara/micrófono/ubicación. La CSP restringe recursos y destinos de formularios, conserva la hidratación de Next y permite Google/Supabase/Analytics; los scripts inline siguen permitidos para compatibilidad con Next. HSTS se activa en producción durante un año, sin `includeSubDomains` ni preload.
+
+Aplicar `20261014033303_security_hardening.sql` en Toxic antes de publicar. `public.is_admin()` pasa a ser `SECURITY INVOKER`; la consulta privilegiada queda en `store_private.is_admin()` y requiere identidad Auth además de whitelist activa. Las políticas RLS siguen habilitadas. La tabla privada del limitador no tiene políticas públicas: sólo el servidor con su rol existente puede utilizarla. La protección de contraseñas filtradas sigue siendo un ajuste opcional de Supabase; el acceso actual utiliza Google.
+
+Mercado Pago requiere **ambas** variables `MERCADOPAGO_ACCESS_TOKEN` y `MERCADOPAGO_WEBHOOK_SECRET`; no se habilita checkout si falta alguna. La segunda se obtiene en Tus integraciones → Webhooks y no es el access token. Se valida la firma HMAC-SHA256 del manifiesto oficial `id:<data.id>;request-id:<x-request-id>;ts:<ts>;`, con comparación constante. Los reintentos firmados se aceptan aunque tengan un timestamp antiguo: el procesamiento es idempotente y se vuelve a consultar el estado actual al proveedor. No se admite IPN sin firma.
+
+Antes de confirmar un pago se comprueban su ID, referencia al pedido, importe exacto, moneda ARS, merchant order, pertenencia del pago a esa merchant order y preferencia almacenada. `confirm_verified_order_payment` repite las invariantes con bloqueo de fila y evita reutilizar el mismo pago entre pedidos; una notificación repetida no descuenta stock dos veces. Las verificaciones fallidas no marcan el pedido como pagado. Los pagos y estados no compatibles no se aplican automáticamente. Las llamadas al proveedor tienen un límite de espera de siete segundos por consulta.
+
+La creación de preferencias limita intentos mediante Postgres, compartidos entre procesos: diez por identificador de cliente y cien globales cada cinco minutos. Guarda sólo hashes del identificador de red; el límite global se conserva incluso si faltan cabeceras del proxy o alguien varía el identificador. Devuelve 429 con `Retry-After`; si no puede consultar el limitador, devuelve 503 antes de crear pedidos. Este control reduce abuso del checkout y no sustituye un WAF o límites de tráfico del hosting.
+
+La prueba SQL `supabase/tests/security_hardening.sql` verifica identidad, whitelist, aislamiento de credenciales, límites, vinculación de pagos e idempotencia con datos ficticios y rollback. Las pruebas previas de panel, galería, WhatsApp y CRM se mantienen. Para probar un build local con `npm start`, conservar el mismo `NEXT_DEPLOYMENT_ID` que figura en `.next/required-server-files.json`; un identificador distinto provoca recargas de Next por protección de versiones y puede descartar fragmentos de navegación.
+
+## Stack de la aplicación
 
 - Next.js 16 (App Router, Server Components y Server Actions)
 - React 19, TypeScript y Tailwind CSS 4

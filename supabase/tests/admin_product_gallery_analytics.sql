@@ -2,7 +2,7 @@
 begin;
 insert into public.admin_allowlist(email) values ('gallery-check@example.invalid');
 set local role authenticated;
-set local request.jwt.claims = '{"role":"authenticated","email":"gallery-check@example.invalid"}';
+set local request.jwt.claims = '{"role":"authenticated","sub":"11111111-1111-4111-8111-111111111111","email":"gallery-check@example.invalid"}';
 do $$
 declare
   test_product_id uuid;
@@ -38,7 +38,7 @@ begin
   update public.storefront_settings set google_analytics_id='G-TEST123456',google_analytics_enabled=true where id=true;
   if not exists(select 1 from public.storefront_settings where id=true and google_analytics_enabled) then raise exception 'Analytics update failed'; end if;
 end $$;
-set local request.jwt.claims = '{"role":"authenticated","email":"outside-gallery@example.invalid"}';
+set local request.jwt.claims = '{"role":"authenticated","sub":"22222222-2222-4222-8222-222222222222","email":"outside-gallery@example.invalid"}';
 do $$ declare affected integer; begin
   begin
     perform public.save_catalog_product(null,'{}','[]');
