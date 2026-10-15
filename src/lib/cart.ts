@@ -12,16 +12,17 @@ const storedItem = z.object({
   variantId: z.string(), quantity: z.number().int().positive(),
 });
 
-export function readCart(stored: string | null): CartItem[] {
+export function readCart(stored: string | null, products?: ProductWithVariants[]): CartItem[] {
   try {
     const data: unknown = JSON.parse(stored ?? "[]");
     if (!Array.isArray(data)) return [];
     return data.flatMap((item) => {
       const parsed = storedItem.safeParse(item);
       if (!parsed.success) return [];
-      const variant = parsed.data.product.variants.find((entry) => entry.id === parsed.data.variantId);
+      const product = products ? products.find((entry) => entry.variants.some((variant) => variant.id === parsed.data.variantId)) : parsed.data.product;
+      const variant = product?.variants.find((entry) => entry.id === parsed.data.variantId);
       if (!variant || !variant.stock) return [];
-      return [{ ...parsed.data, quantity: Math.min(parsed.data.quantity, variant.stock) } as CartItem];
+      return [{ ...parsed.data, product, quantity: Math.min(parsed.data.quantity, variant.stock) } as CartItem];
     });
   } catch { return []; }
 }

@@ -11,9 +11,11 @@ import type { ProductWithVariants } from "@/types/database";
 const cartStorageKey = "notta-cart";
 
 
-export function ProductDetailActions({ product }: { product: ProductWithVariants }) {
+export function ProductDetailActions({ product,selectedVariantId,onVariantChange }: { product: ProductWithVariants;selectedVariantId?:string;onVariantChange?:(id:string)=>void }) {
   const router = useRouter();
-  const [variantId, setVariantId] = useState(product.variants.find((item) => item.stock > 0)?.id ?? product.variants[0]?.id ?? "");
+  const [localVariantId, setLocalVariantId] = useState(product.variants.find((item) => item.stock > 0)?.id ?? product.variants[0]?.id ?? "");
+  const variantId=selectedVariantId??localVariantId;
+  function setVariantId(id:string){setLocalVariantId(id);onVariantChange?.(id);}
   const [cartTotal, setCartTotal] = useState(0);
   const variant = product.variants.find((item) => item.id === variantId);
   const soldOut = !variant || variant.stock === 0;
@@ -44,7 +46,7 @@ export function ProductDetailActions({ product }: { product: ProductWithVariants
   }
 
   return (
-    <div className="product-detail-actions"><FreeShippingProgress total={cartTotal} /><div className="variant-picker" role="group" aria-label="Presentación"><span>Presentación</span><div>{product.variants.map((item) => <button key={item.id} className="variant-option" type="button" aria-pressed={item.id === variantId} disabled={item.stock === 0} onClick={() => setVariantId(item.id)}>{item.label}{item.stock === 0 ? " · Sin stock" : ""}</button>)}</div></div><strong className="product-detail-price">{variant && new Intl.NumberFormat("es-AR", { style: "currency", currency: product.currency, maximumFractionDigits: 0 }).format(variant.price)}</strong><button className="product-detail-add" type="button" disabled={soldOut} onClick={addToCart}>
+    <div className="product-detail-actions"><FreeShippingProgress total={cartTotal} /><div className="variant-picker" role="group" aria-label={product.option_name??"Presentación"}><span>{product.option_name??"Presentación"}</span><div>{product.variants.map((item) => <button key={item.id} className="variant-option" type="button" aria-pressed={item.id === variantId} disabled={item.stock === 0} onClick={() => setVariantId(item.id)}>{item.label}{item.stock === 0 ? " · Sin stock" : ""}</button>)}</div></div><strong className="product-detail-price">{variant && new Intl.NumberFormat("es-AR", { style: "currency", currency: product.currency, maximumFractionDigits: 0 }).format(variant.price)}</strong><button className="product-detail-add" type="button" disabled={soldOut} onClick={addToCart}>
       <ShoppingBag size={16} /> {soldOut ? "Sin stock" : "Añadir al carrito"}
     </button></div>
   );

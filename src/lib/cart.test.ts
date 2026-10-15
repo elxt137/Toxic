@@ -3,6 +3,14 @@ import { readCart, addCartItem } from "./cart";
 import { demoProducts } from "./products";
 
 describe("cart storage and stock", () => {
+  it("restores a color moved to a consolidated listing using its current price and stock", () => {
+    const old = demoProducts[0];
+    const variantId = old.variants[0].id;
+    const current = { ...old, id: "consolidated", brand: "", variants: [{ ...old.variants[0], label: "Gris", price: 8000, stock: 1 }] };
+    const stored = JSON.stringify([{ product: old, variantId, quantity: 2 }]);
+    expect(readCart(stored, [current])).toEqual([{ product: current, variantId, quantity: 1 }]);
+    expect(readCart(stored, [])).toEqual([]);
+  });
   it.each([null, "not json", "{}", "[null]", '[{"product":{}}]'])("rejects malformed storage %s", (stored) => {
     expect(readCart(stored)).toEqual([]);
   });

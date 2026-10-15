@@ -194,6 +194,11 @@ export async function getPublishedProduct(slug: string) {
   const products = await getPublishedProducts();
   return products.find((product) => product.slug === slug) ?? null;
 }
+export async function getProductRedirect(slug:string){
+  if(!getSupabaseConfig())return null;
+  const client=await createClient();const {data,error}=await client.from("product_redirects").select("new_slug").eq("old_slug",slug).maybeSingle();
+  return error?null:data?.new_slug??null;
+}
 
 export function formatPrice(price: number, currency = "ARS") {
   return new Intl.NumberFormat("es-AR", {

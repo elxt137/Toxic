@@ -47,7 +47,7 @@ export function Catalog({ products, whatsappNumber, settings = defaultCommerceSe
     }
     if (savedCart) {
       try {
-        const savedItems = readCart(savedCart);
+        const savedItems = readCart(savedCart, products);
         timeoutIds.push(window.setTimeout(() => setCart(savedItems), 0));
       } catch {
         window.localStorage.removeItem(cartStorageKey);
@@ -58,7 +58,7 @@ export function Catalog({ products, whatsappNumber, settings = defaultCommerceSe
       window.removeEventListener("notta-cart-open", openCart);
       window.removeEventListener("hashchange", openCartFromHash);
     };
-  }, []);
+  }, [products]);
 
   useEffect(() => {
     if (!open) return;
@@ -81,7 +81,7 @@ export function Catalog({ products, whatsappNumber, settings = defaultCommerceSe
     window.dispatchEvent(new Event("notta-cart-updated"));
   }, [cart]);
 
-  const brands = useMemo(() => [...new Set(products.map((product) => product.brand))].sort(), [products]);
+  const brands = useMemo(() => [...new Set(products.map((product) => product.brand).filter(Boolean))].sort(), [products]);
   const filtered = filterCatalogProducts(products, { category, query, brand: brand === "Todas las marcas" ? undefined : brand });
   const featured = filtered.filter((product) => product.is_featured);
   const total = cart.reduce((sum, item) => sum + (item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0) * item.quantity, 0);
