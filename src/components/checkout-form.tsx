@@ -4,14 +4,15 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { readCart, type CartItem } from "@/lib/cart";
+import type { ProductWithVariants } from "@/types/database";
 import { discountedPrice, type CustomerBenefit } from "@/lib/crm";
 import { defaultCommerceSettings, type CommerceSettings } from "@/lib/shipping";
 import { FreeShippingProgress } from "@/components/free-shipping-progress";
 
 const cartStorageKey = "notta-cart";
-function getStoredCart() {
+function getStoredCart(products?: ProductWithVariants[]) {
   try {
-    return readCart(window.localStorage.getItem(cartStorageKey));
+    return readCart(window.localStorage.getItem(cartStorageKey), products);
   } catch { return []; }
 }
 
@@ -19,15 +20,15 @@ const money = (value: number) => new Intl.NumberFormat("es-AR", {
   style: "currency", currency: "ARS", maximumFractionDigits: 0,
 }).format(value);
 
-export function CheckoutForm({ settings = defaultCommerceSettings, benefit = null, benefitUnavailable = false }: { settings?: CommerceSettings; benefit?: CustomerBenefit | null; benefitUnavailable?: boolean }) {
+export function CheckoutForm({ settings = defaultCommerceSettings, benefit = null, benefitUnavailable = false, products }: { settings?: CommerceSettings; benefit?: CustomerBenefit | null; benefitUnavailable?: boolean; products?: ProductWithVariants[] }) {
   const [cart, setCart] = useState<CartItem[] | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => setCart(getStoredCart()), 0);
+    const timeoutId = window.setTimeout(() => setCart(getStoredCart(products)), 0);
     return () => window.clearTimeout(timeoutId);
-  }, []);
+  }, [products]);
 
   const subtotal = useMemo(() => (cart ?? []).reduce((sum,item) => sum+(item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0)*item.quantity,0),[cart]);
   const total = useMemo(() => (cart ?? []).reduce((sum, item) => sum + discountedPrice(item.product.variants.find((variant) => variant.id === item.variantId)?.price ?? 0,benefit?.percent ?? 0) * item.quantity, 0), [cart,benefit]);

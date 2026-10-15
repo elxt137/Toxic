@@ -1,0 +1,9 @@
+import {beforeEach,expect,it,vi} from "vitest";
+const {authorize,client,sign}=vi.hoisted(()=>({authorize:vi.fn(),client:vi.fn(),sign:vi.fn()}));
+vi.mock("@/lib/auth",()=>({requireAdmin:authorize}));vi.mock("@/lib/supabase/server",()=>({createClient:client}));
+import {prepareProductVideoUpload} from "./image-actions";
+function form(size="1000") {const data=new FormData();data.set("size",size);data.set("header",new File([new Uint8Array([0,0,0,24,102,116,121,112,105,115,111,109,0,0,0,0])],"header",{type:"video/mp4"}));return data;}
+beforeEach(()=>{vi.clearAllMocks();authorize.mockResolvedValue({});sign.mockResolvedValue({data:{token:"synthetic-token"},error:null});client.mockResolvedValue({storage:{from:()=>({createSignedUploadUrl:sign,getPublicUrl:()=>({data:{publicUrl:"https://example.invalid/video.mp4"}})})}});});
+it("issues a narrowly scoped upload for an authorized administrator",async()=>{expect(await prepareProductVideoUpload(form())).toMatchObject({token:"synthetic-token",path:expect.stringMatching(/^catalog\/.+\.mp4$/)});expect(sign).toHaveBeenCalledWith(expect.stringMatching(/^catalog\/.+\.mp4$/),{upsert:false});});
+it("rejects oversized and malformed videos before issuing a token",async()=>{expect((await prepareProductVideoUpload(form("999999999"))).error).toBeTruthy();const data=form();data.set("header",new File(["bad"],"header",{type:"video/mp4"}));expect((await prepareProductVideoUpload(data)).error).toBeTruthy();expect(client).not.toHaveBeenCalled();});
+it("denies non-admins and handles storage failures",async()=>{authorize.mockRejectedValueOnce(new Error("unauthorized"));await expect(prepareProductVideoUpload(form())).rejects.toThrow("unauthorized");expect(client).not.toHaveBeenCalled();sign.mockResolvedValue({data:null,error:{message:"private details"}});expect((await prepareProductVideoUpload(form())).error).toContain("No se pudo");});

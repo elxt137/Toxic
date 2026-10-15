@@ -1,18 +1,17 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound,permanentRedirect } from "next/navigation";
 
-import { getPublishedProduct } from "@/lib/products";
-import { ProductDetailActions } from "@/components/product-detail-actions";
+import { getPublishedProduct,getProductRedirect } from "@/lib/products";
+import {ProductDetailContent} from "@/components/product-detail-content";
 import { StorefrontHeader } from "@/components/storefront-header";
-import { ProductGallery } from "@/components/product-gallery";
 
 type ProductPageProps = { params: Promise<{ slug: string }> };
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await getPublishedProduct(slug);
-  if (!product) notFound();
+  if (!product) {const target=await getProductRedirect(slug);if(target)permanentRedirect(`/productos/${target}`);notFound();}
 
   return (
     <>
@@ -20,16 +19,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <main className="product-detail-page">
       <div className="shell">
         <Link className="product-detail-back" href="/#catalogo"><ArrowLeft size={16} /> Volver al catálogo</Link>
-        <div className="product-detail">
-          <ProductGallery name={product.name} images={product.image_urls?.length ? product.image_urls : product.image_url ? [product.image_url] : []} />
-          <div className="product-detail-copy">
-            <p className="product-brand">{product.brand}</p>
-            <h1>{product.name}</h1>
-            <p className="product-detail-category">{product.category === "Decant" ? "Limpieza y protección" : "Accesorios"}{product.size_ml ? ` · ${product.size_ml} ml` : ""}</p>
-            <p className="product-detail-description">{product.description || "Un aliado para el cuidado de tu veh?culo."}</p>
-            <ProductDetailActions product={product} />
-          </div>
-        </div>
+        <ProductDetailContent product={product}/>
       </div>
       </main>
     </>

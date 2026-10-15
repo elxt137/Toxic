@@ -47,7 +47,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     client.from("customer_groups").select("*").order("created_at"),
   ]);
   if (productResult.error || variantResult.error || settings.error || metadata.error || coupons.error || groups.error) throw new Error("No se pudo cargar el panel de administración.");
-  const products = (productResult.data ?? []).map((product) => ({ ...product, variants: (variantResult.data ?? []).filter((variant) => variant.product_id === product.id) }));
+  const products = (productResult.data ?? []).filter(product=>!product.merged_into).map((product) => ({ ...product, variants: (variantResult.data ?? []).filter((variant) => variant.product_id === product.id) }));
   const query = typeof params.q === "string" ? params.q : "";
   return <main className="admin-page premium-admin">
     <header className="admin-header"><div><Link className="brand-mark" href="/">RC2 <span>Estética Vehicular</span></Link></div><div className="admin-nav"><AdminThemeToggle /><span className="admin-identity">{admin.email}</span><Link href="/" target="_blank" rel="noopener noreferrer">Ver tienda <ExternalLink size={15} /></Link><form action="/auth/signout" method="post"><button type="submit"><LogOut size={16} /> Salir</button></form></div></header>

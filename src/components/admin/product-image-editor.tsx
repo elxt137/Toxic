@@ -2,6 +2,7 @@
 import { useId, useState } from "react";
 import { uploadProductImage } from "@/app/admin/image-actions";
 import { maxProductImageBytes } from "@/lib/product-editor";
+import { allowedImageTypes,reorderMedia } from "@/lib/product-media";
 
 export function ProductImageEditor({ images, onChange, onBusy }: { images: string[]; onChange: (images: string[]) => void; onBusy: (busy: boolean) => void }) {
   const id = useId();
@@ -11,7 +12,7 @@ export function ProductImageEditor({ images, onChange, onBusy }: { images: strin
   async function upload(files: File[]) {
     setError("");
     if (images.length + files.length > 6) { setError("Podés guardar hasta 6 fotos por producto."); return; }
-    if (files.some((file) => !["image/jpeg", "image/png", "image/webp"].includes(file.type) || !file.size || file.size > maxProductImageBytes)) { setError("Elegí fotos JPG, PNG o WebP de hasta 5 MB cada una."); return; }
+    if (files.some((file) => !allowedImageTypes.includes(file.type) || !file.size || file.size > maxProductImageBytes)) { setError("Elegí fotos JPG, PNG, WebP, AVIF o GIF de hasta 5 MB cada una."); return; }
     setBusy(true); onBusy(true);
     const uploaded = [...images];
     try {
@@ -37,9 +38,9 @@ export function ProductImageEditor({ images, onChange, onBusy }: { images: strin
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={image} alt={`Foto ${index + 1} del producto`} width={140} height={140} />
       <figcaption>{index === 0 ? "Portada" : `Foto ${index + 1}`}</figcaption>
-      <div>{index > 0 && <button type="button" onClick={() => onChange([image, ...images.filter((_, i) => i !== index)])}>Usar de portada</button>}<button type="button" onClick={() => onChange(images.filter((_, i) => i !== index))} aria-label={`Quitar foto ${index + 1}`}>Quitar</button></div>
+      <div>{index>0&&<><button type="button" onClick={()=>onChange(reorderMedia(images,index,index-1))} aria-label={`Adelantar foto ${index+1}`}>←</button><button type="button" onClick={() => onChange([image, ...images.filter((_, i) => i !== index)])}>Usar de portada</button></>}{index<images.length-1&&<button type="button" onClick={()=>onChange(reorderMedia(images,index,index+1))} aria-label={`Atrasar foto ${index+1}`}>→</button>}<button type="button" onClick={() => onChange(images.filter((_, i) => i !== index))} aria-label={`Quitar foto ${index + 1}`}>Quitar</button></div>
     </figure>)}</div>
-    <label htmlFor={id}>Subir fotos<input id={id} type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; if (files.length) void upload(files); }} /></label>
+    <label htmlFor={id}>Subir fotos<input id={id} type="file" multiple accept={allowedImageTypes.join(",")} onChange={(event) => { const files = Array.from(event.target.files ?? []); event.target.value = ""; if (files.length) void upload(files); }} /></label>
     <div className="image-url-entry"><label htmlFor={`${id}-url`}>O agregar por URL<input id={`${id}-url`} type="url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://..." /></label><button type="button" onClick={addUrl}>Agregar foto</button></div>
     {busy && <p role="status">Subiendo fotos…</p>}{error && <p className="form-message error" role="alert">{error}</p>}
     <small>Los cambios de la galería se aplican al guardar el producto.</small>

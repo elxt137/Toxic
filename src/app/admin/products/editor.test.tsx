@@ -4,7 +4,7 @@ import { demoProducts } from "@/lib/products";
 const { authorize, client } = vi.hoisted(() => ({ authorize: vi.fn(), client: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ requireAdmin: authorize }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: client }));
-vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND"); }, unstable_rethrow: () => {} }));
+vi.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND"); }, redirect: (url: string) => { throw new Error(`REDIRECT:${url}`); }, unstable_rethrow: () => {} }));
 import ProductEditorPage from "./[id]/page";
 import NewProductPage from "./new/page";
 beforeEach(() => {
@@ -15,6 +15,14 @@ beforeEach(() => {
   } });
 });
 afterEach(cleanup);
+it("opens the consolidated editor when following an archived color listing", async () => {
+  client.mockResolvedValue({ from: (table: string) => {
+    const builder: Record<string, unknown> = { then: (resolve: (value: unknown) => void) => resolve({ data: table === "products" ? { ...demoProducts[0], merged_into: "canonical" } : [], error: null }) };
+    for (const key of ["select", "eq", "order", "maybeSingle"]) builder[key] = () => builder;
+    return builder;
+  } });
+  await expect(ProductEditorPage({ params: Promise.resolve({ id: "11111111-1111-4111-8111-111111111111" }) })).rejects.toThrow("REDIRECT:/admin/products/canonical");
+});
 it("opens a complete editor for the selected product", async () => {
   render(await ProductEditorPage({ params: Promise.resolve({ id: "11111111-1111-4111-8111-111111111111" }) }));
   expect(screen.getByRole("heading", { name: "Editar producto" })).toBeTruthy();

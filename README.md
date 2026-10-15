@@ -196,7 +196,6 @@ Hostinger documenta soporte de SSR, ISR y rutas API en su [hosting de Next.js](h
 
 ## Próximos incrementos
 
-- Carga directa de imágenes al bucket `product-images` (v1 acepta URL pública).
 - Filtros por marca, concentración y precio.
 - Historial de movimientos de stock.
 - Canal de consulta/compra, una vez definido el flujo comercial.
@@ -235,3 +234,13 @@ Aplicá `supabase/migrations/20261012042748_commerce_settings_customer_crm.sql`.
 ## Adaptación de la vidriera a Toxic
 
 La portada, el catálogo, el pedido y el panel usan textos de cuidado vehicular. Los productos y precios demo son ilustrativos. La interfaz muestra las categorías Limpieza y protección y Accesorios; por compatibilidad conserva los valores históricos Decant y Frasco completo en la base de datos. No se modificaron productos existentes ni se requiere una migración para este cambio de textos.
+
+## Colores, marca opcional y contenido multimedia
+
+La marca puede quedar vacía. La migración `20261015221735_catalog_colors_media.sql` elimina la marca genérica RC2 de los productos existentes y reúne los tres tapones de válvula en una publicación con colores Rojo, Gris y Negro. Conserva los identificadores de variantes, precios y stock; archiva las publicaciones de origen y redirige sus enlaces permanentemente. Antes del cambio guarda un respaldo privado del catálogo. No agrupa productos de distinto tipo ni elimina registros históricos.
+
+En **Editar producto**, usá **Tipo de variante** para indicar Color, Tamaño o Presentación y definí nombre, precio y stock para cada opción. Podés asociarle una foto de la galería. El comprador elige la opción en el detalle; cambian la foto y el precio y se agrega esa variante al carrito. Los carritos guardados se actualizan con el catálogo vigente al abrir el catálogo o el checkout.
+
+Se admiten hasta seis fotos JPG, PNG, WebP, AVIF o GIF de 5 MB cada una y tres videos MP4 o WebM de 25 MB cada uno. Las flechas adelantan o atrasan las fotos; la primera es la portada. Los videos también pueden ordenarse y se reproducen con controles, sin inicio automático. La compatibilidad de video depende del códec y del navegador; para mayor compatibilidad usá MP4 con H.264/AAC. Los videos se cargan directamente a Storage con un permiso de subida generado tras verificar al administrador. No se amplía el límite de las Server Actions. La validación comprueba tipo, cabecera y tamaño; las políticas RLS siguen activas.
+
+`supabase/tests/catalog_colors_media.sql` verifica guardado de marca vacía, opciones con stock/precio/foto, videos, orden de portada, redirecciones públicas, aislamiento de borradores y rechazo de usuarios sin permisos. Se ejecuta dentro de una transacción con rollback.
