@@ -7,6 +7,15 @@ export function productForm() {
   return form;
 }
 describe("product editing", () => {
+  it("accepts an empty brand and stores color labels and their images", () => {
+    const form=productForm();form.set("brand","");form.set("option_name","Color");form.set("variants",JSON.stringify([{label:"Rojo",size_ml:null,price:8000,stock:2,is_active:true,image_url:"https://example.invalid/red.avif"}]));
+    const result=parseProductInput(form);expect(result.product.brand).toBe("");expect(result.product.option_name).toBe("Color");expect(result.variants[0].image_url).toContain("red.avif");
+  });
+  it("keeps video order and rejects more than three videos or duplicate variant labels", () => {
+    const form=productForm();form.set("video_urls",JSON.stringify(["https://example.invalid/demo.mp4"]));expect(parseProductInput(form).product.video_urls).toEqual(["https://example.invalid/demo.mp4"]);
+    form.set("video_urls",JSON.stringify(Array(4).fill("https://example.invalid/demo.mp4")));expect(()=>parseProductInput(form)).toThrow();
+    form.set("video_urls","[]");const variants=JSON.parse(String(form.get("variants")));form.set("variants",JSON.stringify([...variants,...variants]));expect(()=>parseProductInput(form)).toThrow();
+  });
   it("derives price and stock from the first presentation and defaults to draft", () => {
     expect(parseProductInput(productForm()).product).toMatchObject({ price: 1000, stock: 3, is_published: false, image_url: null, image_urls: [] });
   });
@@ -23,6 +32,12 @@ describe("product editing", () => {
   });
 });
 describe("product image uploads", () => {
+  it("accepts AVIF and GIF signatures and rejects misleading types",async()=>{
+    const avif=new Uint8Array([0,0,0,24,102,116,121,112,97,118,105,102,0,0,0,0,97,118,105,102,109,105,102,49]);
+    await expect(validateProductImage(new File([avif],"photo.avif",{type:"image/avif"}))).resolves.toMatchObject({extension:"avif"});
+    await expect(validateProductImage(new File(["GIF89a"],"photo.gif",{type:"image/gif"}))).resolves.toMatchObject({extension:"gif"});
+    await expect(validateProductImage(new File([avif],"fake.png",{type:"image/png"}))).rejects.toThrow();
+  });
   it("accepts JPEG PNG and WebP signatures", async () => {
     for (const [type, bytes] of [["image/jpeg", [255,216,255,224]], ["image/png", [137,80,78,71,13,10,26,10]], ["image/webp", [82,73,70,70,0,0,0,0,87,69,66,80]]] as const) {
       await expect(validateProductImage(new File([new Uint8Array(bytes)], "photo", { type }))).resolves.toMatchObject({ contentType: type });

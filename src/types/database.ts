@@ -9,6 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      product_redirects:{Row:{old_slug:string;new_slug:string};Insert:{old_slug:string;new_slug:string};Update:{new_slug?:string};Relationships:[]};
       customer_groups: {
         Row: { id: string; slug: string; name: string; discount_percent: number; created_at: string };
         Insert: { id?: string; slug: string; name: string; discount_percent?: number };
@@ -61,6 +62,7 @@ export type Database = {
       };
       products: {
         Row: {
+          option_name?:string;video_urls?:string[];merged_into?:string|null;
           id: string;
           name: string;
           slug: string;
@@ -85,6 +87,7 @@ export type Database = {
           name: string;
           slug: string;
           brand: string;
+          option_name?:string;video_urls?:string[];merged_into?:string|null;
           description?: string;
           category?: "Decant" | "Frasco completo";
           price: number;
@@ -105,6 +108,7 @@ export type Database = {
       };
       product_variants: {
         Row: {
+          image_url?:string|null;
           id: string;
           product_id: string;
           label: string;
@@ -120,6 +124,7 @@ export type Database = {
           id?: string;
           product_id: string;
           label: string;
+          image_url?:string|null;
           size_ml?: number | null;
           price: number;
           stock?: number;

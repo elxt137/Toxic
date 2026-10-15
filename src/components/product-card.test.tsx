@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
+afterEach(cleanup);
 
 import { ProductCard } from "@/components/product-card";
 import type { ProductWithVariants } from "@/types/database";
@@ -26,6 +27,10 @@ const product: ProductWithVariants = {
 };
 
 describe("ProductCard", () => {
+  it("shows the name alone without a leading comma when the brand is empty",()=>{
+    render(<ProductCard product={{...product,brand:""}} index={0}/>);
+    expect(screen.getByRole("heading",{name:"Torino 21"})).toBeTruthy();
+  });
   it("uses the reference card copy: uppercase name, three instalments, and Comprar action", () => {
     render(<ProductCard product={product} index={0} />);
 

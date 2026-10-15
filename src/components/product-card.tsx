@@ -28,7 +28,8 @@ export function ProductCard({ product, index }: ProductCardProps) {
         {soldOut && <span className="stock-badge">Sin stock</span>}
       </div>
       <div className="product-info">
-        <h3 className="product-title">{product.brand}, {product.name}</h3>
+        <h3 className="product-title">{product.brand ? `${product.brand}, ${product.name}` : product.name}</h3>
+        {product.option_name==="Color"&&<p className="product-colors">Colores: {product.variants.map(variant=>variant.label).join(", ")}</p>}
       </div>
     </Link>
     <div className="product-footer">

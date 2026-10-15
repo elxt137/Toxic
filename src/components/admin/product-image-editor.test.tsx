@@ -5,6 +5,10 @@ vi.mock("@/app/admin/image-actions", () => ({ uploadProductImage: upload }));
 import { ProductImageEditor } from "./product-image-editor";
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 describe("product photo editor", () => {
+  it("reorders photos without removing them",()=>{
+    const change=vi.fn();render(<ProductImageEditor images={["https://example.invalid/a.jpg","https://example.invalid/b.jpg","https://example.invalid/c.jpg"]} onChange={change} onBusy={vi.fn()}/>);
+    fireEvent.click(screen.getByRole("button",{name:"Adelantar foto 3"}));expect(change).toHaveBeenLastCalledWith(["https://example.invalid/a.jpg","https://example.invalid/c.jpg","https://example.invalid/b.jpg"]);
+  });
   it("uploads a local file and reports its public URL", async () => {
     upload.mockResolvedValue({ url: "https://example.invalid/photo.jpg" }); const change = vi.fn(); const busy = vi.fn();
     render(<ProductImageEditor images={[]} onChange={change} onBusy={busy} />);
