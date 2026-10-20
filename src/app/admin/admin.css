@@ -281,6 +281,10 @@
 }
 @media (max-width: 600px) { .premium-admin .product-form { grid-template-columns: minmax(0,1fr); padding: 16px 12px; } }
 .product-image-grid video { width:100%;height:160px;object-fit:contain;background:#111; }
+.delete-product-form { margin: 16px; }
+.delete-product-form button { padding: 10px 16px; border: 1px solid #d64545; border-radius: 8px; background: transparent; color: #d64545; cursor: pointer; }
+.delete-product-form button:disabled { opacity: .5; cursor: wait; }
+.delete-product-form [role="alert"] { max-width: 600px; color: var(--admin-text); }
 .variant-image-settings { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px; }
 .variant-image-settings :is(h3,p) { grid-column:1/-1; }
 .variant-image-settings p { color:var(--admin-muted);font-size:13px; }

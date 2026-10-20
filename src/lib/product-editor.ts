@@ -1,10 +1,11 @@
+import { productCategoryIds } from "./product-categories";
 import { z } from "zod";
 import { presentationSizeSchema } from "./presentation-size";
 
 const photoUrl = z.string().url().refine((value) => /^https?:\/\//i.test(value), "Usá una URL HTTP o HTTPS.");
 const variantSchema = z.object({ id: z.string().uuid().optional(), label: z.string().trim().min(1).max(40), image_url:photoUrl.nullable().optional(), size_ml: presentationSizeSchema.nullable(), price: z.number().nonnegative().max(999_999_999), stock: z.number().int().nonnegative().max(999_999), is_active: z.boolean() });
 const productSchema = z.object({
-  name: z.string().trim().min(2).max(120), brand: z.string().trim().max(100).refine(value=>value===""||value.length>=2), description: z.string().trim().max(800), category: z.enum(["Decant", "Frasco completo"]),
+  name: z.string().trim().min(2).max(120), brand: z.string().trim().max(100).refine(value=>value===""||value.length>=2), description: z.string().trim().max(800), category: z.enum([...productCategoryIds, "Decant", "Frasco completo"]),
   option_name:z.string().trim().min(1).max(30),video_urls:z.array(photoUrl).max(3),
   concentration: z.string().trim().max(80).nullable(), sort_order: z.coerce.number().int(), is_published: z.boolean(), is_featured: z.boolean(), image_urls: z.array(photoUrl).max(6),
 });
@@ -14,7 +15,7 @@ export function parseProductInput(form: FormData) {
   if(new Set(variants.map(variant=>variant.label.toLocaleLowerCase())).size!==variants.length)throw new Error("Cada variante debe tener un nombre diferente.");
   const rawImages = form.get("image_urls");
   const imageUrls = rawImages ? JSON.parse(String(rawImages)) : form.get("image_url") ? [form.get("image_url")] : [];
-  const product = productSchema.parse({ name: form.get("name"), brand: form.get("brand")??"", option_name:form.get("option_name")||"Presentación",video_urls:JSON.parse(String(form.get("video_urls")||"[]")),description: form.get("description") ?? "", category: form.get("category") ?? "Decant", concentration: form.get("concentration") || null, sort_order: form.get("sort_order") || 0, is_published: form.get("is_published") === "on", is_featured: form.get("is_featured") === "on", image_urls: imageUrls });
+  const product = productSchema.parse({ name: form.get("name"), brand: form.get("brand")??"", option_name:form.get("option_name")||"Presentación",video_urls:JSON.parse(String(form.get("video_urls")||"[]")),description: form.get("description") ?? "", category: form.get("category") ?? "lavado", concentration: form.get("concentration") || null, sort_order: form.get("sort_order") || 0, is_published: form.get("is_published") === "on", is_featured: form.get("is_featured") === "on", image_urls: imageUrls });
   return { product: { ...product, image_url: product.image_urls[0] ?? null, price: variants[0].price, stock: variants[0].stock, size_ml: variants[0].size_ml }, variants };
 }
 

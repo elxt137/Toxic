@@ -3,6 +3,12 @@ import { afterEach, expect, it, vi } from "vitest";
 vi.mock("@/app/admin/image-actions", () => ({ uploadProductImage: vi.fn() }));
 import { ProductForm } from "./product-form";
 afterEach(cleanup);
+it("offers the seven vehicle care categories", () => {
+  render(<ProductForm action={vi.fn()} submitLabel="Crear producto" />);
+  const select = screen.getByLabelText("Categoría") as HTMLSelectElement;
+  expect(Array.from(select.options, option => option.text)).toEqual(["Lavado", "Limpieza interior", "Protección", "Ceras y brillo", "Cepillos y microfibras", "Iluminación LED", "Kits"]);
+  expect(select.value).toBe("lavado");
+});
 it("keeps unsaved input after a rejected save and lets the administrator retry", async () => {
   const action = vi.fn().mockRejectedValueOnce(new Error("database failure")).mockResolvedValueOnce(undefined);
   const { container } = render(<ProductForm action={action} submitLabel="Crear producto" />);

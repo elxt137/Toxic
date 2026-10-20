@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 import { filterCatalogProducts } from "./catalog-navigation";
 import { demoProducts } from "./products";
 
+it("filters by the saved category instead of guessing from the name", () => {
+  const product = { ...demoProducts[0], name: "Cera especial", category: "interior" as const };
+  expect(filterCatalogProducts([product], { category: "interior" })).toEqual([product]);
+  expect(filterCatalogProducts([product], { category: "brillo" })).toEqual([]);
+});
+
 describe("vehicle care catalog navigation", () => {
   it.each([
     ["lavado", ["Shampoo para autos"]],
