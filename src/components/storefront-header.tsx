@@ -84,7 +84,7 @@ export function StorefrontHeader() {
     <header data-scrolled={isScrolled} className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={`${styles.bar} shell`}>
         <button className={styles.menuToggle} type="button" aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}</button>
-        <Link className={styles.logo} href="/" aria-label="RC2 · Estética Vehicular, inicio"><Image src="/rc2-logo.jpg" alt="RC2 · Estética Vehicular" width={2400} height={1792} sizes="80px" loading="eager" className={styles.logoImage} /></Link>
+        <Link className={styles.logo} href="/" aria-label="RC2 · Estética Vehicular, inicio"><Image src="/rc2-logo-yellow-white.png" alt="RC2 · Estética Vehicular" width={1451} height={1084} sizes="80px" loading="eager" className={styles.logoImage} /></Link>
         <form className={`${styles.search} ${showSearch ? styles.searchOpen : ""}`} action="/productos" role="search">
           <label className={styles.visuallyHidden} htmlFor="storefront-search">Buscar productos</label>
           <input id="storefront-search" name="q" type="search" placeholder="Buscá acá" />
