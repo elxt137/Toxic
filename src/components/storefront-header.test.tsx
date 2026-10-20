@@ -7,7 +7,7 @@ describe("StorefrontHeader", () => {
   it("uses the supplied RC2 logo as the link to the home page", () => {
     render(<StorefrontHeader />);
     const logo = screen.getByRole("img", { name: "RC2 · Estética Vehicular" });
-    expect(logo.getAttribute("src")).toContain("rc2-logo.jpg");
+    expect(logo.getAttribute("src")).toContain("rc2-logo-yellow-white.png");
     expect(logo.closest("a")?.getAttribute("href")).toBe("/");
   });
   afterEach(() => {
