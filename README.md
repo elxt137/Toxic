@@ -1,5 +1,32 @@
 # RC2 · Estética Vehicular · v1.0.0
 
+## Categorías y eliminación de productos
+
+El editor permite clasificar productos en Lavado, Limpieza interior, Protección,
+Ceras y brillo, Cepillos y microfibras, Iluminación LED y Kits. Aplicar primero
+`20261020223437_vehicle_care_categories.sql` en Toxic (`qtoibmsiqsgvnervnzjy`).
+Los productos heredados conservan su categoría y aparecen como **Sin clasificar**
+en el editor hasta elegir una de las nuevas. El catálogo respeta la categoría
+guardada; sólo los productos heredados mantienen el filtro por nombre.
+
+**Eliminar producto** está disponible al desplegar una fila del inventario y en
+el editor. Requiere confirmación y autorización administrativa. Si existen pedidos
+o productos asociados, la base rechaza la eliminación: desmarcar **Publicado**
+para ocultarlo conservando el historial. Las fotos y videos almacenados no se borran.
+
+El 20/10/2026 se aplicó la migración de categorías y se publicaron las 27 fichas
+del archivo `productos_toxic_shine.md`: 25 altas y actualización de Atomic y
+Banana sin duplicarlas, por un total de 63 unidades. El manifiesto está en
+`supabase/imports/toxic-shine-20261020.json`. Las 29 fotos verificadas están en
+`product-images/toxic-shine-20261020/`; Hyper Black y Creme Wax Banana usan fotos
+del fabricante para corregir una referencia equivocada y evitar una marca de agua.
+Las fragancias no identificadas se ofrecen como **Aroma a coordinar**; las fotos
+son de referencia. No se inventaron nombres ni existencias por fragancia.
+Se conserva un respaldo previo privado en `store_private.catalog_change_backups`
+con identificador `toxic-shine-import-20261020`. La importación se ejecutó en una
+transacción con validaciones de precios, stock y duplicados; no debe repetirse
+sin reconciliar las ventas o ediciones posteriores.
+
 Vidriera pública de RC2 · Estética Vehicular: ceras, shampoo, cepillos, luces LED, microfibras y accesorios para el cuidado del auto. Cuenta con catálogo filtrable, precios, disponibilidad y armado de pedido por WhatsApp. Incluye un panel privado para administrar productos, stock y publicación, autenticado con Google mediante Supabase y autorizado por whitelist.
 
 ## Navegación y verificación

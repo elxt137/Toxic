@@ -1,3 +1,4 @@
+import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth";
@@ -21,5 +22,5 @@ export default async function ProductEditorPage({ params }: { params: Promise<{ 
   if (!product.data) notFound();
   if (product.data.merged_into) redirect(`/admin/products/${product.data.merged_into}`);
   const editable = { ...product.data, variants: variants.data ?? [] };
-  return <ProductEditorShell title="Editar producto"><ProductForm product={editable} action={updateProduct.bind(null, id)} submitLabel="Guardar cambios" /><PrivateProductFields id={id} salePrice={editable.price} metadata={metadata.data ?? undefined} /></ProductEditorShell>;
+  return <ProductEditorShell title="Editar producto"><ProductForm product={editable} action={updateProduct.bind(null, id)} submitLabel="Guardar cambios" /><PrivateProductFields id={id} salePrice={editable.price} metadata={metadata.data ?? undefined} /><DeleteProductButton id={id} name={editable.name} /></ProductEditorShell>;
 }

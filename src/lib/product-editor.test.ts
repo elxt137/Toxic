@@ -7,6 +7,14 @@ export function productForm() {
   return form;
 }
 describe("product editing", () => {
+  it.each(["lavado", "interior", "proteccion", "brillo", "cepillos", "iluminacion", "kits"])("saves the selected category %s", category => {
+    const form = productForm(); form.set("category", category);
+    expect(parseProductInput(form).product.category).toBe(category);
+  });
+  it("rejects unknown categories", () => {
+    const form = productForm(); form.set("category", "unknown");
+    expect(() => parseProductInput(form)).toThrow();
+  });
   it("accepts an empty brand and stores color labels and their images", () => {
     const form=productForm();form.set("brand","");form.set("option_name","Color");form.set("variants",JSON.stringify([{label:"Rojo",size_ml:null,price:8000,stock:2,is_active:true,image_url:"https://example.invalid/red.avif"}]));
     const result=parseProductInput(form);expect(result.product.brand).toBe("");expect(result.product.option_name).toBe("Color");expect(result.variants[0].image_url).toContain("red.avif");

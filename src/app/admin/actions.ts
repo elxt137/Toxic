@@ -19,6 +19,18 @@ async function persistProduct(id: string | null, form: FormData) {
 export async function createProduct(form: FormData) { await persistProduct(null, form); }
 export async function updateProduct(id: string, form: FormData) { await persistProduct(id, form); }
 
+export async function deleteProduct(id: string) {
+  await requireAdmin();
+  z.string().uuid().parse(id);
+  const client = await createClient();
+  const { data, error } = await client.from("products").delete().eq("id", id).select("id").maybeSingle();
+  if (error?.code === "23503") return { error: "El producto tiene pedidos o productos asociados. Ocultalo desmarcando Publicado para conservar el historial." };
+  if (error || !data) return { error: "No se pudo eliminar el producto. Actualizá el inventario y volvé a intentar." };
+  revalidatePath("/", "layout");
+  revalidatePath("/admin");
+  redirect("/admin?section=products&success=deleted");
+}
+
 export async function updateAnnouncement(formData: FormData) {
   await requireAdmin();
   const announcement_text = z.string().trim().min(1).max(240).parse(formData.get("announcement_text"));
