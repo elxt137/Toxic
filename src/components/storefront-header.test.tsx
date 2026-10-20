@@ -4,6 +4,12 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { StorefrontHeader } from "@/components/storefront-header";
 
 describe("StorefrontHeader", () => {
+  it("uses the supplied RC2 logo as the link to the home page", () => {
+    render(<StorefrontHeader />);
+    const logo = screen.getByRole("img", { name: "RC2 · Estética Vehicular" });
+    expect(logo.getAttribute("src")).toContain("rc2-logo.jpg");
+    expect(logo.closest("a")?.getAttribute("href")).toBe("/");
+  });
   afterEach(() => {
     cleanup();
     window.localStorage.clear();
