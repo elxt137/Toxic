@@ -5,10 +5,10 @@ import { deleteProduct } from "@/app/admin/actions";
 
 export function DeleteProductButton({ id, name }: { id: string; name: string }) {
   const [error, action, pending] = useActionState(async () => {
-    try { await deleteProduct(id); return ""; }
+    try { const result = await deleteProduct(id); return result.error; }
     catch (error) {
       unstable_rethrow(error);
-      return error instanceof Error ? error.message : "No se pudo eliminar el producto.";
+      return "No se pudo eliminar el producto. Volvé a intentar.";
     }
   }, "");
   return <form action={action} onSubmit={event => {

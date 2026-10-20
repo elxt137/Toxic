@@ -24,8 +24,8 @@ export async function deleteProduct(id: string) {
   z.string().uuid().parse(id);
   const client = await createClient();
   const { data, error } = await client.from("products").delete().eq("id", id).select("id").maybeSingle();
-  if (error?.code === "23503") throw new Error("El producto tiene pedidos o productos asociados. Ocultalo desmarcando Publicado para conservar el historial.");
-  if (error || !data) throw new Error("No se pudo eliminar el producto. Actualizá el inventario y volvé a intentar.");
+  if (error?.code === "23503") return { error: "El producto tiene pedidos o productos asociados. Ocultalo desmarcando Publicado para conservar el historial." };
+  if (error || !data) return { error: "No se pudo eliminar el producto. Actualizá el inventario y volvé a intentar." };
   revalidatePath("/", "layout");
   revalidatePath("/admin");
   redirect("/admin?section=products&success=deleted");

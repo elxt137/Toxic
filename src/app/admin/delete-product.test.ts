@@ -25,11 +25,11 @@ it("rejects non-admins and invalid IDs before connecting", async () => {
 });
 it("explains that products referenced in orders must be hidden", async () => {
   mocks.result.mockResolvedValue({ data: null, error: { code: "23503" } });
-  await expect(deleteProduct(id)).rejects.toThrow("Ocultalo");
+  await expect(deleteProduct(id)).resolves.toEqual({ error: expect.stringContaining("Ocultalo") });
 });
 it("reports missing products and database errors without claiming success", async () => {
   for (const error of [null, { code: "unknown", message: "secret" }]) {
     mocks.result.mockResolvedValue({ data: null, error });
-    await expect(deleteProduct(id)).rejects.toThrow("No se pudo eliminar");
+    await expect(deleteProduct(id)).resolves.toEqual({ error: expect.stringContaining("No se pudo eliminar") });
   }
 });

@@ -12,7 +12,7 @@ it("cancels deletion when the administrator declines confirmation", () => {
 });
 it("confirms the product name and displays the server rejection", async () => {
   const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
-  remove.mockRejectedValue(Error("Ocultalo para conservar el historial."));
+  remove.mockResolvedValue({ error: "Ocultalo para conservar el historial." });
   render(<DeleteProductButton id="one" name="Shampoo" />);
   fireEvent.click(screen.getByRole("button", { name: "Eliminar producto" }));
   await waitFor(() => expect(remove).toHaveBeenCalledWith("one"));
