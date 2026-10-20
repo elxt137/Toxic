@@ -1,3 +1,4 @@
+import type { ProductCategory } from "@/lib/product-categories";
 export type Json =
   | string
   | number
@@ -68,7 +69,7 @@ export type Database = {
           slug: string;
           brand: string;
           description: string;
-          category: "Decant" | "Frasco completo";
+          category: ProductCategory;
           price: number;
           currency: string;
           stock: number;
@@ -89,7 +90,7 @@ export type Database = {
           brand: string;
           option_name?:string;video_urls?:string[];merged_into?:string|null;
           description?: string;
-          category?: "Decant" | "Frasco completo";
+          category?: ProductCategory;
           price: number;
           currency?: string;
           stock?: number;

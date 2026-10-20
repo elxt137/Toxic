@@ -13,8 +13,7 @@ export const catalogCategories = [
 
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-// Legacy products have only two database categories. Classify their names until
-// the inventory gains dedicated vehicle-care categories through a new migration.
+// Only legacy products use name matching until an administrator classifies them.
 const categoryNames: Record<string, RegExp> = {
   lavado: /shampoo|champu|lavado|espuma|snow foam/,
   interior: /interior|tapizado|cuero|alfombra|habitaculo/,
@@ -33,7 +32,7 @@ export function filterCatalogProducts(products: ProductWithVariants[], filters: 
     const text = normalize(`${product.name} ${product.brand} ${product.description}`);
     const category = filters.category;
     const matchesCategory = !category || category === "todos" ||
-      (category === "Decant" || category === "Frasco completo" ? product.category === category : categoryNames[category]?.test(name) === true);
+      (["Decant", "Frasco completo"].includes(product.category) ? (category === "Decant" || category === "Frasco completo" ? product.category === category : categoryNames[category]?.test(name) === true) : product.category === category);
     return matchesCategory && (!filters.brand || product.brand === filters.brand) && words.every((word) => text.includes(word));
   });
 }

@@ -1,3 +1,4 @@
+import { DeleteProductButton } from "@/components/admin/delete-product-button";
 import { Package, Search } from "lucide-react";
 import Link from "next/link";
 import { ProductForm } from "@/components/product-form";
@@ -45,6 +46,7 @@ export function AdminInventory({ products, query = "", updateAction, privateData
             <Link className="inventory-edit-label" href={`/admin/products/${product.id}`} aria-label={`Editar ${product.name}`}>Editar producto</Link>
           </summary>
           <ProductForm action={updateAction.bind(null, product.id)} product={product} submitLabel="Guardar cambios" />
+          <DeleteProductButton id={product.id} name={product.name} />
           {privateData && <PrivateProductFields id={product.id} salePrice={product.variants.find((variant) => variant.is_active)?.price ?? product.price} metadata={privateData.find((entry) => entry.product_id === product.id)} />}
         </details>;
       })}

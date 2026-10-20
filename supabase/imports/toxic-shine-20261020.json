@@ -1,0 +1,787 @@
+[
+  {
+    "source_slug": "shampoo-atomic",
+    "slug": "producto-de9764cf-6088-4724-8d3a-93fe2e12b313",
+    "existing_id": "de9764cf-6088-4724-8d3a-93fe2e12b313",
+    "name": "Shampoo Atomic Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Shampoo para el lavado del auto con pH alcalino, pensado para la etapa de prelavado. Podés usarlo en balde o con espumador. Presentación de 600 ml con pico vertedor.",
+    "category": "lavado",
+    "price": 8700,
+    "stock": 4,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/shampoo-atomic-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 100,
+    "variants": [
+      {
+        "id": "7eb2a0da-2350-4cb4-8a41-23b92a3e452b",
+        "label": "600 ml + pico",
+        "price": 8700,
+        "stock": 4,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "shampoo-banana",
+    "slug": "producto-64687c00-3b9c-4e25-a67f-38cc4bab48ad",
+    "existing_id": "64687c00-3b9c-4e25-a67f-38cc4bab48ad",
+    "name": "Shampoo Banana Armour Gloss Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Shampoo de pH neutro con cera para sumar limpieza y brillo al lavado del auto. Apto para balde o espumador. Presentación de 600 ml con pico vertedor.",
+    "category": "lavado",
+    "price": 8700,
+    "stock": 3,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/shampoo-banana-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 101,
+    "variants": [
+      {
+        "id": "68609ef6-3cf7-4e24-8f22-a0bf16658b0f",
+        "label": "600 ml + pico",
+        "price": 8700,
+        "stock": 3,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "shampoo-hyper-black",
+    "slug": "shampoo-hyper-black",
+    "existing_id": null,
+    "name": "Shampoo Hyper Black Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Shampoo de pH neutro para el lavado y mantenimiento de la pintura, especialmente en tonos oscuros. Apto para balde o espumador. Presentación de 600 ml con pico vertedor.",
+    "category": "lavado",
+    "price": 9300,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/shampoo-hyper-black-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 102,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 9300,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "shampoo-mud-wash",
+    "slug": "shampoo-mud-wash",
+    "existing_id": null,
+    "name": "Shampoo Mud Wash Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Shampoo alcalino de prelavado para trabajar sobre barro y suciedad del uso fuera de ruta. Su espuma activa se puede aplicar con balde o espumador. Presentación de 600 ml con pico vertedor.",
+    "category": "lavado",
+    "price": 9300,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/shampoo-mud-wash-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 103,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 9300,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "cera-cherry-quick",
+    "slug": "cera-cherry-quick",
+    "existing_id": null,
+    "name": "Cherry Quick Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Cera líquida en spray para dar una terminación brillante después del lavado. Una opción práctica para sumar el toque final a la carrocería. Envase de 600 ml con gatillo.",
+    "category": "brillo",
+    "price": 9300,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/cera-cherry-quick-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 104,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 9300,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "cera-extreme-detail",
+    "slug": "cera-extreme-detail",
+    "existing_id": null,
+    "name": "Extreme Detail Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Cera líquida tipo quick detailer para realzar la terminación de la carrocería. Formato en spray para incorporar a la rutina de cuidado exterior. Envase de 600 ml con gatillo.",
+    "category": "brillo",
+    "price": 9300,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/cera-extreme-detail-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 105,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 9300,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "cera-ilussion-wax",
+    "slug": "cera-ilussion-wax",
+    "existing_id": null,
+    "name": "Ilussion Wax Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Cera líquida con carnauba para dar brillo a la pintura del vehículo. Presentación en spray de 600 ml con gatillo, para el acabado exterior.",
+    "category": "brillo",
+    "price": 9300,
+    "stock": 1,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/cera-ilussion-wax-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 106,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 9300,
+        "stock": 1,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "cera-creme-wax-banana",
+    "slug": "cera-creme-wax-banana",
+    "existing_id": null,
+    "name": "Creme Wax Banana Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Cera en crema con carnauba de la línea profesional Toxic Shine. Pensada para el encerado y la terminación de la pintura. Presentación de 600 ml con pico vertedor.",
+    "category": "brillo",
+    "price": 9300,
+    "stock": 1,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/cera-creme-wax-banana-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 107,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 9300,
+        "stock": 1,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "all-clean",
+    "slug": "all-clean",
+    "existing_id": null,
+    "name": "All Clean Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Limpiador multiuso APC para tapizados, plásticos y motor. Una opción para distintas tareas de limpieza del vehículo. Presentación de 600 ml con gatillo; seguí las indicaciones del envase para cada superficie.",
+    "category": "interior",
+    "price": 9800,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/all-clean-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 108,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 9800,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "inferno-gel",
+    "slug": "inferno-gel",
+    "existing_id": null,
+    "name": "Inferno Gel Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Limpiador multiuso APC en gel para la limpieza del vehículo. Su formato de 600 ml con gatillo permite incorporarlo a la rutina de detailing. Usalo según las indicaciones y compatibilidades del envase.",
+    "category": "lavado",
+    "price": 11900,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/inferno-gel-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 109,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 11900,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "bug-remover",
+    "slug": "bug-remover",
+    "existing_id": null,
+    "name": "Bug Remover Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Removedor de insectos para la limpieza exterior de la carrocería. Pensado para tratar los restos adheridos durante la rutina de lavado. Presentación de 600 ml con gatillo.",
+    "category": "lavado",
+    "price": 9000,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/bug-remover-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 110,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 9000,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "paint-prepare",
+    "slug": "paint-prepare",
+    "existing_id": null,
+    "name": "Paint Prepare Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Preparador de superficies de la línea profesional Toxic Shine, para la etapa previa a un tratamiento cerámico. Presentación de 600 ml con gatillo. Aplicalo según las indicaciones del fabricante.",
+    "category": "proteccion",
+    "price": 10100,
+    "stock": 1,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/paint-prepare-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 111,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 10100,
+        "stock": 1,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "new-tire-600",
+    "slug": "new-tire-600",
+    "existing_id": null,
+    "name": "New Tire Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Revitalizador para cubiertas y plásticos exteriores del vehículo. Pensado para renovar su apariencia dentro de la rutina de cuidado exterior. Presentación de 600 ml con pico vertedor.",
+    "category": "proteccion",
+    "price": 17900,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/new-tire-600-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 112,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 17900,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "new-tire-250",
+    "slug": "new-tire-250",
+    "existing_id": null,
+    "name": "New Tire Toxic Shine 250 ml",
+    "brand": "Toxic Shine",
+    "description": "Revitalizador para cubiertas y plásticos exteriores del vehículo. Formato de 250 ml para sumar a tu equipo de cuidado exterior.",
+    "category": "proteccion",
+    "price": 9900,
+    "stock": 2,
+    "size_ml": 250,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/new-tire-250-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 113,
+    "variants": [
+      {
+        "id": null,
+        "label": "250 ml",
+        "price": 9900,
+        "stock": 2,
+        "size_ml": 250,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "dark-fluid",
+    "slug": "dark-fluid",
+    "existing_id": null,
+    "name": "Dark Fluid Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Revitalizador de cubiertas para completar la terminación exterior del vehículo. Presentación de 600 ml con pico vertedor. Aplicalo siguiendo las indicaciones del envase.",
+    "category": "proteccion",
+    "price": 10100,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/dark-fluid-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 114,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 10100,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "bubble-gum-trim",
+    "slug": "bubble-gum-trim",
+    "existing_id": null,
+    "name": "Bubble Gum Trim Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Acondicionador para plásticos interiores con aroma a chicle. Pensado para renovar la apariencia del habitáculo y sumar una terminación cuidada. Envase de 600 ml con gatillo.",
+    "category": "interior",
+    "price": 15800,
+    "stock": 2,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/bubble-gum-trim-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 115,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 15800,
+        "stock": 2,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "trim-look-candy",
+    "slug": "trim-look-candy",
+    "existing_id": null,
+    "name": "Trim Look Candy Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Revividor para el cuidado y la terminación de los interiores del vehículo. Presentación de 600 ml con gatillo. Revisá en el envase las superficies compatibles y la forma de aplicación.",
+    "category": "interior",
+    "price": 15800,
+    "stock": 1,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/trim-look-candy-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 116,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + gatillo",
+        "price": 15800,
+        "stock": 1,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "holy-gloss",
+    "slug": "holy-gloss",
+    "existing_id": null,
+    "name": "Holy Gloss Toxic Shine 600 ml",
+    "brand": "Toxic Shine",
+    "description": "Revividor de interiores para sumar a la rutina de cuidado del habitáculo. Presentación de 600 ml con pico vertedor. Seguí las indicaciones del fabricante para lograr la terminación buscada.",
+    "category": "interior",
+    "price": 16400,
+    "stock": 1,
+    "size_ml": 600,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/holy-gloss-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 117,
+    "variants": [
+      {
+        "id": null,
+        "label": "600 ml + pico",
+        "price": 16400,
+        "stock": 1,
+        "size_ml": 600,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "clean-stuff",
+    "slug": "clean-stuff",
+    "existing_id": null,
+    "name": "Clean Stuff Toxic Shine aerosol 390 ml",
+    "brand": "Toxic Shine",
+    "description": "Limpiador multiuso en espuma para tapizados, alfombras y superficies vinílicas. Formato aerosol de 390 ml para la limpieza interior del vehículo. Probá primero en una zona poco visible.",
+    "category": "interior",
+    "price": 14000,
+    "stock": 2,
+    "size_ml": 390,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/clean-stuff-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 118,
+    "variants": [
+      {
+        "id": null,
+        "label": "Aerosol 390 ml",
+        "price": 14000,
+        "stock": 2,
+        "size_ml": 390,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "mini-all-in-one",
+    "slug": "mini-all-in-one",
+    "existing_id": null,
+    "name": "Mini All in One Toxic Shine 120 ml",
+    "brand": "Toxic Shine",
+    "description": "Pulidor y abrillantador 3 en 1: pule, protege y aporta brillo en un mismo producto. Apto para aplicación manual o con pulidora. Presentación de 120 ml.",
+    "category": "brillo",
+    "price": 9000,
+    "stock": 2,
+    "size_ml": 120,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/mini-all-in-one-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 119,
+    "variants": [
+      {
+        "id": null,
+        "label": "120 ml",
+        "price": 9000,
+        "stock": 2,
+        "size_ml": 120,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "mini-polish",
+    "slug": "mini-polish",
+    "existing_id": null,
+    "name": "Mini Polish Toxic Shine 120 ml",
+    "brand": "Toxic Shine",
+    "description": "Pulidor abrasivo para la etapa de corte y corrección de la pintura. Se puede trabajar a mano o con pulidora, según las indicaciones del fabricante. Presentación de 120 ml.",
+    "category": "brillo",
+    "price": 9000,
+    "stock": 2,
+    "size_ml": 120,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/mini-polish-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 120,
+    "variants": [
+      {
+        "id": null,
+        "label": "120 ml",
+        "price": 9000,
+        "stock": 2,
+        "size_ml": 120,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "anti-fog",
+    "slug": "anti-fog",
+    "existing_id": null,
+    "name": "Anti Fog Toxic Shine 120 ml",
+    "brand": "Toxic Shine",
+    "description": "Antiempañante para vidrios, espejos, cascos y antiparras. Presentación de 120 ml con spray. Verificá la compatibilidad con la superficie y seguí las indicaciones del envase.",
+    "category": "proteccion",
+    "price": 4700,
+    "stock": 3,
+    "size_ml": 120,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/anti-fog-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 121,
+    "variants": [
+      {
+        "id": null,
+        "label": "120 ml spray",
+        "price": 4700,
+        "stock": 3,
+        "size_ml": 120,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "perfume-auto",
+    "slug": "perfume-auto",
+    "existing_id": null,
+    "name": "Perfume para auto Toxic Shine 120 ml",
+    "brand": "Toxic Shine",
+    "description": "Aromatizante para auto en spray de 120 ml. Disponible en distintas fragancias: coordiná el aroma antes de comprar. Las fotos muestran fragancias de referencia y no garantizan disponibilidad de un aroma específico.",
+    "category": "interior",
+    "price": 7500,
+    "stock": 9,
+    "size_ml": 120,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/perfume-auto-0.webp",
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/perfume-auto-1.webp",
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/perfume-auto-2.webp"
+    ],
+    "option_name": "Aroma",
+    "sort_order": 122,
+    "variants": [
+      {
+        "id": null,
+        "label": "Aroma a coordinar",
+        "price": 7500,
+        "stock": 9,
+        "size_ml": 120,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "aromatizante-clip-x2",
+    "slug": "aromatizante-clip-x2",
+    "existing_id": null,
+    "name": "Aromatizante clip rejilla Toxic Shine pack x2",
+    "brand": "Toxic Shine",
+    "description": "Aromatizante de clip para colocar en la rejilla de ventilación del auto. Cada pack incluye 2 unidades. Aromas surtidos a coordinar antes de comprar; la imagen es de referencia.",
+    "category": "interior",
+    "price": 5700,
+    "stock": 8,
+    "size_ml": null,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/aromatizante-clip-x2-0.webp"
+    ],
+    "option_name": "Aroma",
+    "sort_order": 123,
+    "variants": [
+      {
+        "id": null,
+        "label": "Aroma a coordinar",
+        "price": 5700,
+        "stock": 8,
+        "size_ml": null,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "galon-all-clean",
+    "slug": "galon-all-clean",
+    "existing_id": null,
+    "name": "Galón All Clean Toxic Shine 4 L",
+    "brand": "Toxic Shine",
+    "description": "Limpiador multiuso APC en presentación de 4 litros. Una opción para lavaderos o para recargar envases de 600 ml. Seguí las indicaciones de uso del fabricante para cada superficie.",
+    "category": "interior",
+    "price": 31500,
+    "stock": 1,
+    "size_ml": 4000,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/galon-all-clean-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 124,
+    "variants": [
+      {
+        "id": null,
+        "label": "4 litros",
+        "price": 31500,
+        "stock": 1,
+        "size_ml": 4000,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "galon-cherry-quick",
+    "slug": "galon-cherry-quick",
+    "existing_id": null,
+    "name": "Galón Cherry Quick Toxic Shine 4 L",
+    "brand": "Toxic Shine",
+    "description": "Cera líquida para dar brillo y una terminación final después del lavado. Presentación de 4 litros, práctica para lavaderos o para recargar envases de 600 ml.",
+    "category": "brillo",
+    "price": 30000,
+    "stock": 1,
+    "size_ml": 4000,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/galon-cherry-quick-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 125,
+    "variants": [
+      {
+        "id": null,
+        "label": "4 litros",
+        "price": 30000,
+        "stock": 1,
+        "size_ml": 4000,
+        "is_active": true
+      }
+    ]
+  },
+  {
+    "source_slug": "galon-ctrl-z",
+    "slug": "galon-ctrl-z",
+    "existing_id": null,
+    "name": "Galón CTRL Z Toxic Shine 4 L",
+    "brand": "Toxic Shine",
+    "description": "Limpiador multiuso Toxic Shine en presentación de 4 litros. Pensado para el trabajo de lavaderos o para recargar envases de 600 ml. Consultá en el envase las superficies compatibles y las indicaciones de uso.",
+    "category": "interior",
+    "price": 45000,
+    "stock": 1,
+    "size_ml": 4000,
+    "currency": "ARS",
+    "is_published": true,
+    "image_urls": [
+      "https://qtoibmsiqsgvnervnzjy.supabase.co/storage/v1/object/public/product-images/toxic-shine-20261020/galon-ctrl-z-0.webp"
+    ],
+    "option_name": "Presentación",
+    "sort_order": 126,
+    "variants": [
+      {
+        "id": null,
+        "label": "4 litros",
+        "price": 45000,
+        "stock": 1,
+        "size_ml": 4000,
+        "is_active": true
+      }
+    ]
+  }
+]
