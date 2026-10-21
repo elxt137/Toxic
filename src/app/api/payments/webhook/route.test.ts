@@ -26,7 +26,12 @@ it("fails closed when the webhook secret is absent",async()=>{
 });
 it("checks payment and merchant order then applies a verified atomic confirmation",async()=>{
   expect((await POST(request())).status).toBe(200);
-  expect(rpc).toHaveBeenCalledWith("confirm_verified_order_payment",expect.objectContaining({ p_order_id:id,p_payment_id:"123",p_amount:100,p_currency:"ARS",p_preference_id:"pref-test",p_status:"approved" }));
+  expect(rpc).toHaveBeenCalledWith("record_verified_payment",expect.objectContaining({ p_order_id:id,p_payment_id:"123",p_amount:100,p_currency:"ARS",p_preference_id:"pref-test",p_status:"approved",p_payment_type:null,p_paid_at:null }));
+});
+it("records only payment metadata fetched from the verified provider",async()=>{
+  fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ id:123,external_reference:id,status:"approved",transaction_amount:100,currency_id:"ARS",order:{id:456},payment_type_id:"credit_card",date_approved:"2026-10-20T12:30:00.000Z" })));
+  expect((await POST(request())).status).toBe(200);
+  expect(rpc).toHaveBeenCalledWith("record_verified_payment",expect.objectContaining({p_payment_type:"credit_card",p_paid_at:"2026-10-20T12:30:00.000Z"}));
 });
 it("rejects mismatched amounts and never changes the order",async()=>{
   fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({ id:123,external_reference:id,status:"approved",transaction_amount:1,currency_id:"ARS",order:{ id:456 } })));

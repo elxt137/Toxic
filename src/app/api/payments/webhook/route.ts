@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { paymentMatchesOrder, verifyPaymentSignature } from "@/lib/payment-security";
 
 const providerId = z.union([z.number().int().positive().safe(), z.string().regex(/^\d{1,30}$/)]);
-const paymentSchema = z.object({ id: providerId, external_reference: z.string().uuid(), status: z.enum(["approved","pending","in_process","authorized","rejected","cancelled"]), transaction_amount: z.number().finite().positive(), currency_id: z.literal("ARS"), order: z.object({ id: providerId }) });
+const paymentSchema = z.object({ id: providerId, external_reference: z.string().uuid(), status: z.enum(["approved","pending","in_process","authorized","rejected","cancelled"]), transaction_amount: z.number().finite().positive(), currency_id: z.literal("ARS"), order: z.object({ id: providerId }), payment_type_id: z.string().min(1).max(80).nullable().optional(), date_approved: z.iso.datetime({ offset: true }).nullable().optional() });
 const merchantSchema = z.object({ preference_id: z.string().min(1), external_reference: z.string().uuid(), payments: z.array(z.object({ id: providerId })) });
 
 export async function POST(request: Request) {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     const merchant = merchantSchema.safeParse(await merchantResponse.json());
     if (!merchant.success || !paymentMatchesOrder(payment,merchant.data,order,paymentId)) return NextResponse.json({ error: "El pago no coincide con el pedido." }, { status: 409 });
     const status = payment.status === "approved" ? "approved" : payment.status === "rejected" ? "rejected" : payment.status === "cancelled" ? "cancelled" : "pending";
-    const { data, error } = await admin.rpc("confirm_verified_order_payment", { p_order_id: order.id, p_payment_id: paymentId, p_status: status, p_amount: payment.transaction_amount, p_currency: payment.currency_id, p_preference_id: merchant.data.preference_id });
+    const { data, error } = await admin.rpc("record_verified_payment", { p_order_id: order.id, p_payment_id: paymentId, p_status: status, p_amount: payment.transaction_amount, p_currency: payment.currency_id, p_preference_id: merchant.data.preference_id, p_payment_type: payment.payment_type_id ?? null, p_paid_at: status === "approved" ? payment.date_approved ?? null : null });
     if (error) return NextResponse.json({ error: "No se pudo confirmar el pedido." }, { status: 503 });
     if (!data) return NextResponse.json({ error: "No se pudo vincular el pago al pedido." }, { status: 409 });
     return NextResponse.json({ received: true });
