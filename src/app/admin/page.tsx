@@ -5,7 +5,8 @@ import { ProductForm } from "@/components/product-form";
 import { AdminInventory } from "@/components/admin-inventory";
 import { AdminThemeToggle } from "@/components/admin/admin-theme";
 import { WhatsappSettings } from "@/components/admin/whatsapp-settings";
-import { DashboardPanel, OrdersPanel, MarketingPanel } from "@/components/admin/console-panels";
+import { OrdersPanel } from "@/components/admin/orders-panel";
+import { DashboardPanel, MarketingPanel } from "@/components/admin/console-panels";
 import { CrmPanel } from "@/components/admin/crm-panel";
 import { CommerceSettingsPanel } from "@/components/admin/commerce-settings";
 import { readCustomers } from "@/lib/admin-crm";
@@ -57,7 +58,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         <div className="admin-title"><div><p className="console-eyebrow">Administración</p><h1>{sections[section].label}</h1><p className="admin-subtitle">{section === "dashboard" ? "Ventas, pedidos y disponibilidad, en un solo lugar." : section === "products" ? "Controlá tu catálogo, los costos y el stock disponible." : section === "marketing" ? "Descuentos que podés generar, imprimir y compartir." : "Gestioná la operación de tu tienda."}</p></div>{section === "products" && <span className="count-pill">{products.length} productos</span>}</div>
         {params.success && <div className="form-message success" role="status">Cambios guardados correctamente.</div>}
         {section === "dashboard" && <DashboardPanel products={products} orders={orders} />}
-        {section === "sales" && <OrdersPanel orders={orders} items={items} selectedOrder={params.order} />}
+        {section === "sales" && <OrdersPanel orders={orders} items={items} selectedOrder={params.order} products={products} barcodes={Object.fromEntries((metadata.data ?? []).filter(item => item.barcode).map(item => [item.product_id, item.barcode!]))} />}
         {section === "clients" && <CrmPanel customers={customers} groups={groups.data ?? []} orders={orders} items={items} query={query} />}
         {section === "marketing" && <MarketingPanel coupons={coupons.data ?? []} />}
         {section === "analytics" && <AnalyticsSettingsPanel settings={{ enabled: settings.data?.google_analytics_enabled ?? false, measurementId: settings.data?.google_analytics_id ?? null }} />}

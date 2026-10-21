@@ -6,10 +6,11 @@ import { chromium, type Browser } from "playwright";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { demoProducts } from "@/lib/products";
 import { AdminThemeProvider } from "@/components/admin/admin-theme";
+vi.mock("next/navigation", async original => ({ ...await original<typeof import("next/navigation")>(), useRouter: () => ({ refresh: vi.fn() }) }));
 
 vi.mock("@/lib/auth", () => ({ requireAdmin: async () => ({ email: "admin@example.invalid" }) }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({ from: (table: string) => {
-  const data = table === "products" ? demoProducts : table === "product_variants" ? demoProducts.flatMap((p) => p.variants) : table === "storefront_settings" ? null : table === "orders" ? [{ id: "11111111-1111-4111-8111-111111111111", status: "approved", total: 6500, created_at: "2026-10-11T12:00:00Z", payer_name: "Cliente de prueba", payer_email: "buyer@example.invalid", shipping_status: "preparing", transaction_status: "processed" }] : table === "coupons" ? [{ id: "11111111-1111-4111-8111-111111111111", code: "RC2-TEST", kind: "percent", value: 15, active: true, usage_limit: 1, used_count: 0, expires_at: null }] : [];
+  const data = table === "products" ? demoProducts : table === "product_variants" ? demoProducts.flatMap((p) => p.variants) : table === "storefront_settings" ? null : table === "orders" ? [{ id: "11111111-1111-4111-8111-111111111111", status: "pending", payment_method: "bank_transfer", total: 6500, created_at: "2026-10-11T12:00:00Z", payer_name: "Cliente de prueba", payer_email: "buyer@example.invalid", buyer_phone: "5492984000000", shipping_status: "preparing", transaction_status: "pending", shipping_street: "Calle de prueba 123", shipping_destination: "home" }] : table === "order_items" ? [{ id: "test-line", order_id: "11111111-1111-4111-8111-111111111111", product_id: demoProducts[0].id, variant_id: demoProducts[0].variants[0].id, variant_label: "500 ml", product_name: "Shampoo para autos", unit_price: 6500, quantity: 1 }] : table === "coupons" ? [{ id: "11111111-1111-4111-8111-111111111111", code: "RC2-TEST", kind: "percent", value: 15, active: true, usage_limit: 1, used_count: 0, expires_at: null }] : [];
   const builder: Record<string, unknown> = { then: (resolve: (value: unknown) => void) => resolve({ data, error: null }) };
   if(table === "customer_groups") dataForCrm(builder,[{ id:"11111111-1111-4111-8111-111111111111",slug:"retail",name:"Minorista",discount_percent:0,created_at:"2026-01-01" },{ id:"22222222-2222-4222-8222-222222222222",slug:"professional",name:"Mayorista/Detailer Profesional",discount_percent:15,created_at:"2026-01-01" }]);
   if(table === "customers") dataForCrm(builder,[{ id:"11111111-1111-4111-8111-111111111111",name:"Cliente de prueba",email:"buyer@example.invalid",phone:"123456",address:"Calle 123, CABA",group_id:"22222222-2222-4222-8222-222222222222",registered_at:"2026-01-01",updated_at:"2026-01-01",last_order_at:null }]);
@@ -25,7 +26,7 @@ import LabelsPage from "./labels/page";
 let browser: Browser;
 beforeAll(async () => { browser = await chromium.launch({ headless: true, channel: process.env.RC2_BROWSER_CHANNEL || "msedge" }); });
 afterAll(async () => { await browser?.close(); });
-const css = ["node_modules/tailwindcss/preflight.css", "src/app/globals.css", "src/app/admin/admin.css"].map((path) => readFileSync(resolve(path), "utf8")).join("\n");
+const css = ["node_modules/tailwindcss/preflight.css", "src/app/globals.css", "src/app/admin/admin.css", "src/components/admin/orders.css"].map((path) => readFileSync(resolve(path), "utf8")).join("\n");
 
 describe("admin appearance in a real browser", () => {
   it("prints black labels on white paper even with dark admin mode", async () => {
@@ -39,7 +40,7 @@ describe("admin appearance in a real browser", () => {
     await page.close();
   });
   it.each((["light", "dark"] as const).flatMap((theme) => ["products", "dashboard", "sales", "clients", "marketing", "customization"].map((section) => ({ theme, section }))))("keeps $theme $section readable at desktop and phone widths", async ({ theme, section }) => {
-    const markup = renderToStaticMarkup(<AdminThemeProvider initialTheme={theme}>{await AdminPage({ searchParams: Promise.resolve({ section }) })}</AdminThemeProvider>);
+    const markup = renderToStaticMarkup(<AdminThemeProvider initialTheme={theme}>{await AdminPage({ searchParams: Promise.resolve({ section, order: section === "sales" ? "11111111-1111-4111-8111-111111111111" : undefined }) })}</AdminThemeProvider>);
     const page = await browser.newPage();
     mkdirSync(resolve(".npm-cache/admin-theme-qa"), { recursive: true });
     await page.route("**/*", (route) => route.abort());
@@ -57,7 +58,21 @@ describe("admin appearance in a real browser", () => {
         expect(edit?.width).toBeGreaterThanOrEqual(80);
       }
     }
-    const ratios = await page.locator(".product-form input:not([type=hidden]):not([type=checkbox]), .inventory-name b, .inventory-stock, .admin-title h1, .console-form input:not([type=hidden]), .console-form select, .console-panel h2, .console-note, .console-kpis strong, .console-status, .coupon-card code, .console-customer b").evaluateAll((elements) => {
+    if (section === "sales") {
+      await page.locator(".sales-create").evaluate(element => element.setAttribute("open", ""));
+      await page.setViewportSize({ width: 320, height: 1000 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+      await page.screenshot({ path: resolve(`.npm-cache/admin-theme-qa/sales-create-${theme}-320.png`), fullPage: true });
+      await page.locator(".sales-create").evaluate(element => element.removeAttribute("open"));
+      await page.locator(".sales-dialog").evaluate(element => (element as HTMLDialogElement).showModal());
+      for (const width of [320, 1280]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await page.screenshot({ path: resolve(`.npm-cache/admin-theme-qa/sales-detail-${theme}-${width}.png`), fullPage: true });
+        expect(await page.locator(".sales-dialog").evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      }
+      await page.locator(".sales-dialog").evaluate(element => (element as HTMLDialogElement).close());
+    }
+    const ratios = await page.locator(".product-form input:not([type=hidden]):not([type=checkbox]), .inventory-name b, .inventory-stock, .admin-title h1, .console-form input:not([type=hidden]), .console-form select, .console-panel h2, .console-note, .console-kpis strong, .console-status, .coupon-card code, .console-customer b, .sales-table .sales-badge, .sales-table strong, .sales-results").evaluateAll((elements) => {
       function rgb(value: string) { return (value.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number); }
       function luminance(color: number[]) { return color.map((value) => { const c = value / 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((sum, value, index) => sum + value * [.2126, .7152, .0722][index], 0); }
       return elements.map((element) => {

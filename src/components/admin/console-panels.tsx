@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight, PackageCheck, ShoppingBag, Ticket, TrendingUp } from "lucide-react";
-import { createCoupons, toggleCoupon, updateOrderWorkflow } from "@/app/admin/console-actions";
-import { adminMoney, customerHistory, paymentLabels, salesMetrics, shippingLabels, transactionLabels } from "@/lib/admin-console";
+import { createCoupons, toggleCoupon } from "@/app/admin/console-actions";
+import { adminMoney, customerHistory, paymentLabels, salesMetrics } from "@/lib/admin-console";
 import { getInventoryStock, getStockStatus } from "@/lib/inventory";
 import type { Database, ProductWithVariants } from "@/types/database";
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 type Coupon = Database["public"]["Tables"]["coupons"]["Row"];
-type Item = Database["public"]["Tables"]["order_items"]["Row"];
 const date = (value: string) => new Intl.DateTimeFormat("es-AR", { timeZone: "America/Argentina/Buenos_Aires", dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 
 export function DashboardPanel({ products, orders }: { products: ProductWithVariants[]; orders: Order[] }) {
@@ -21,17 +20,6 @@ export function DashboardPanel({ products, orders }: { products: ProductWithVari
   </div><p className="console-note">Las ventas corresponden a pagos aprobados. Día y mes según horario de Argentina.</p>
   <div className="console-columns"><section className="console-panel"><div className="panel-heading"><h2>Alertas de stock</h2><span>{alerts.length}</span></div>{alerts.length ? alerts.map((product) => { const stock = getInventoryStock(product); const status = getStockStatus(stock); return <Link className="alert-product" key={product.id} href={`/admin?section=products&q=${encodeURIComponent(product.name)}`}><span className={`status-dot stock-${status.id}`} /><div><b>{product.name}</b><small>{status.label} · {stock} unidades</small></div><ArrowUpRight size={17} /></Link>; }) : <p className="console-empty">Todos los productos tienen stock suficiente.</p>}</section>
   <section className="console-panel"><div className="panel-heading"><h2>Pedidos recientes</h2><Link href="/admin?section=sales">Ver todos</Link></div>{orders.length ? orders.slice(0, 6).map((order) => <Link className="recent-order" key={order.id} href={`/admin?section=sales&order=${order.id}`}><div><b>{order.payer_name ?? "Comprador"}</b><small>#{order.id.slice(0, 8)} · {date(order.created_at)}</small></div><strong>{adminMoney(order.total)}</strong><span className={`console-status ${order.status}`}>{paymentLabels[order.status]}</span></Link>) : <p className="console-empty">Los pedidos aparecerán acá cuando se inicie una compra.</p>}</section></div></>;
-}
-
-export function OrdersPanel({ orders, items, selectedOrder }: { orders: Order[]; items: Item[]; selectedOrder?: string }) {
-  return <section className="console-panel"><div className="panel-heading"><h2>Pedidos, envíos y pagos</h2><span>{orders.length} operaciones</span></div>{!orders.length && <p className="console-empty">Todavía no hay pedidos registrados.</p>}{orders.map((order) => <details className="console-order" key={order.id} open={selectedOrder === order.id}>
-    <summary><div><b>#{order.id.slice(0, 8)} · {order.payer_name ?? "Comprador"}</b><small>{date(order.created_at)}</small></div><strong>{adminMoney(order.total)}</strong><span className={`console-status ${order.shipping_status}`}>{shippingLabels[order.shipping_status] ?? "Preparando"}</span><span className={`console-status ${order.status}`}>{paymentLabels[order.status]}</span></summary>
-    <div className="console-order-body"><div className="order-contact-grid"><div><h3>Comprador</h3><p>{order.payer_email ?? "Sin correo"}</p><p>{order.buyer_phone ?? "Sin teléfono"}</p></div><div><h3>Dirección</h3><p>{[order.shipping_street, order.shipping_number, order.shipping_apartment, order.shipping_city, order.shipping_province, order.shipping_postal_code].filter(Boolean).join(", ") || "Sin dirección registrada"}</p></div><div><h3>Pago</h3><p>{paymentLabels[order.status]}</p><p>{order.mercadopago_payment_id ? `Mercado Pago ${order.mercadopago_payment_id}` : "Sin identificador de pago"}</p>{order.coupon_code && <p>Cupón {order.coupon_code}: −{adminMoney(order.discount_amount)}</p>}</div></div>
-      <ul className="console-order-items">{items.filter((item) => item.order_id === order.id).map((item) => <li key={item.id}><span>{item.quantity} × {item.product_name}</span><b>{adminMoney(item.unit_price * item.quantity)}</b></li>)}</ul>
-      {order.group_discount_percent > 0 && <p className="console-note">Beneficio de {order.customer_group_name}: {order.group_discount_percent}% · Descuento: {adminMoney(order.discount_amount)}</p>}
-      {order.shipping_destination && <p className="console-note">Envío {order.shipping_destination === "home" ? "a domicilio" : "a sucursal"}: {order.free_shipping_qualified ? "gratis" : "a coordinar"}. Mínimo vigente del beneficio: {adminMoney(order.free_shipping_threshold ?? 0)}.</p>}
-      <form className="console-form workflow-form" action={updateOrderWorkflow.bind(null, order.id)}><label>Estado del envío<select name="shipping_status" defaultValue={order.shipping_status}>{Object.entries(shippingLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>Registro de la transacción<select name="transaction_status" defaultValue={order.transaction_status}>{Object.entries(transactionLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label>Número de seguimiento<input name="tracking_number" maxLength={120} defaultValue={order.tracking_number ?? ""} placeholder="Opcional" /></label><button className="admin-button">Guardar seguimiento</button></form><p className="console-note">El seguimiento interno no cambia la confirmación del pago ni descuenta stock. Los pagos se verifican con Mercado Pago.</p>
-    </div></details>)}</section>;
 }
 
 export function CustomersPanel({ orders, query }: { orders: Order[]; query: string }) {

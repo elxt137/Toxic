@@ -139,6 +139,13 @@ export type Database = {
       };
       orders: {
         Row: {
+          payment_method?: "mercadopago" | "bank_transfer";
+          payment_type?: string | null;
+          paid_at?: string | null;
+          transfer_receipt_path?: string | null;
+          payment_confirmed_by?: string | null;
+          delivery_method?: "home" | "branch" | "pickup" | null;
+          created_by?: string | null;
           customer_id: string | null; customer_group_name: string | null; group_discount_percent: number; free_shipping_qualified: boolean; free_shipping_threshold: number | null; shipping_destination: "branch" | "home" | null;
           shipping_status: "preparing" | "in_transit" | "delivered";
           transaction_status: "pending" | "processed" | "completed";
@@ -168,6 +175,13 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          payment_method?: "mercadopago" | "bank_transfer";
+          payment_type?: string | null;
+          paid_at?: string | null;
+          transfer_receipt_path?: string | null;
+          payment_confirmed_by?: string | null;
+          delivery_method?: "home" | "branch" | "pickup" | null;
+          created_by?: string | null;
           customer_id?: string | null; customer_group_name?: string | null; group_discount_percent?: number; free_shipping_qualified?: boolean; free_shipping_threshold?: number | null; shipping_destination?: "branch" | "home" | null;
           shipping_status?: "preparing" | "in_transit" | "delivered";
           transaction_status?: "pending" | "processed" | "completed";
@@ -230,6 +244,9 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      create_bank_transfer_order: { Args: { p_request_id: string; p_customer: Json; p_items: Json }; Returns: string };
+      approve_bank_transfer: { Args: { p_order_id: string }; Returns: boolean };
+      record_verified_payment: { Args: { p_order_id: string; p_payment_id: string; p_status: string; p_amount: number; p_currency: string; p_preference_id: string; p_payment_type: string | null; p_paid_at: string | null }; Returns: boolean };
       consume_checkout_attempt: { Args: { p_key: string }; Returns: boolean };
       confirm_verified_order_payment: { Args: { p_order_id: string; p_payment_id: string; p_status: string; p_amount: number; p_currency: string; p_preference_id: string }; Returns: boolean };
       save_catalog_product: { Args: { p_id: string | null; p_product: Json; p_variants: Json }; Returns: string };
