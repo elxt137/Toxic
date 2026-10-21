@@ -1,0 +1,21 @@
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
+const create = vi.hoisted(() => vi.fn());
+vi.mock("@/app/admin/order-actions", () => ({ createBankTransferOrder: create }));
+import { TransferOrderForm } from "./transfer-order-form";
+import { demoProducts } from "@/lib/products";
+afterEach(() => { cleanup(); vi.clearAllMocks(); });
+it("registers a WhatsApp sale and preserves the request ID across retries", async () => {
+  create.mockResolvedValueOnce({ success: false, message: "Intentá de nuevo." }).mockResolvedValueOnce({ success: true, message: "Venta registrada", orderId: "new-order" });
+  const saved = vi.fn();
+  const { container } = render(<TransferOrderForm products={demoProducts} onCreated={saved} />);
+  fireEvent.change(screen.getByLabelText("Nombre del cliente"), { target: { value: "Lucía" } });
+  fireEvent.change(screen.getByLabelText("Teléfono / WhatsApp"), { target: { value: "5492984000000" } });
+  fireEvent.change(screen.getByLabelText("Entrega o retiro"), { target: { value: "Retira por el local" } });
+  fireEvent.submit(container.querySelector("form")!);
+  expect(await screen.findByRole("alert")).toBeTruthy();
+  fireEvent.submit(container.querySelector("form")!);
+  await waitFor(() => expect(saved).toHaveBeenCalledWith("new-order"));
+  expect(create.mock.calls[0][0].get("request_id")).toBe(create.mock.calls[1][0].get("request_id"));
+  expect(JSON.parse(create.mock.calls[0][0].get("items"))).toHaveLength(1);
+});

@@ -1,4 +1,5 @@
 import "./admin.css";
+import "@/components/admin/orders.css";
 import { cookies } from "next/headers";
 import { AdminThemeProvider } from "@/components/admin/admin-theme";
 // Authentication and private data must be evaluated for each request.

@@ -1,5 +1,53 @@
 # RC2 · Estética Vehicular · v1.0.0
 
+## Gestión de pedidos y ventas
+
+En **Pedidos, envíos y pagos**, el listado muestra ID y fecha/hora de Argentina,
+contacto con WhatsApp, método de pago, estado y total. Permite combinar búsqueda,
+estado y método. **Ver detalle** abre un diálogo lateral accesible con artículos,
+variante y precio vendidos, cantidad, subtotales, descuentos, entrega y seguimiento.
+La imagen, descripción y SKU se consultan del catálogo actual; los nombres,
+variantes e importes vendidos se conservan desde los artículos del pedido.
+
+**Registrar venta por transferencia** carga las ventas acordadas por WhatsApp.
+El servidor calcula el total con precios actuales en ARS; no acepta precios del
+navegador. El alta queda pendiente y no reserva ni descuenta stock. Los reintentos
+de la misma solicitud no crean otro pedido. El checkout público sigue usando
+Mercado Pago.
+
+**Aprobar transferencia** requiere confirmar que ingresó el dinero. La operación
+vuelve a validar identidad Google y whitelist en la base, bloquea el pedido y
+descuenta stock de todas sus variantes en una transacción. No permite acreditar
+pedidos cancelados, rechazados ni pagos de Mercado Pago. Si falta stock revierte
+todo; aprobar nuevamente un pedido acreditado no vuelve a descontarlo. Guarda la
+fecha real de confirmación y el identificador del administrador.
+
+Los comprobantes admiten PDF, JPG o PNG de hasta 5 MB, con validación de firma,
+tipo y tamaño. Se guardan en el bucket privado **transfer-receipts**. Las rutas
+`/admin/orders/[id]/receipt` y `?download=1` requieren administrador en cada acceso,
+no se cachean y no publican URLs permanentes del archivo. Un archivo subido antes
+de un error de vinculación puede permanecer privado sin asociar. Adjuntar un
+comprobante nunca acredita el pago por sí solo.
+
+El webhook de Mercado Pago conserva sus verificaciones de firma, importe,
+moneda, pedido y preferencia. La nueva función `record_verified_payment` guarda
+`payment_type_id` y `date_approved` obtenidos de la API verificada. Los pedidos
+históricos sin esos datos muestran que no están informados; no se infieren de
+la fecha de creación. Referencia: [Obtener pago, Mercado Pago](https://www.mercadopago.com.ar/developers/en/reference/online-payments/checkout-pro-preferences/get-payment/get).
+
+Aplicar `20261021001019_admin_order_management.sql` en **Toxic**
+(`qtoibmsiqsgvnervnzjy`) antes de desplegar. Agrega campos, bucket privado, políticas
+y funciones; conserva las columnas y la función anterior para los webhooks de la
+versión desplegada. Los helpers privilegiados están en `store_private`, con Auth
+y whitelist obligatorias; las funciones públicas son `SECURITY INVOKER`. No se
+otorgan permisos directos nuevos sobre `status` ni se incorpora service role al panel.
+
+Verificación: `npm test`, `npm run check` y
+`supabase/tests/admin_order_management.sql` (datos ficticios y `ROLLBACK`). La prueba
+SQL cubre permisos, alta e idempotencia, stock, falta de stock, rechazo de aprobación
+manual de MP/cancelados, metadatos verificados y notificaciones repetidas. Las pruebas
+visuales cubren modos claro/oscuro, contraste y ausencia de desbordes a 320 y 1280 px.
+
 ## Categorías y eliminación de productos
 
 El editor permite clasificar productos en Lavado, Limpieza interior, Protección,
